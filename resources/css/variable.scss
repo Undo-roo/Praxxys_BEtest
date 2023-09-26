@@ -1,0 +1,81 @@
+$red: #DC3545;
+$green: #16CA40;
+$blue: #007BFF;
+$yellow: #FFC107;
+
+
+$black: #1C1C1C;
+$white: #F8F9FA;
+$dark-gray: #343A40;
+$light-gray: #6C757D;
+
+// $palette: (
+//     red: #DC3545,
+//     green: #16CA40,
+//     blue: #007BFF,
+//     yellow: #FFC107,
+//     black: #1C1C1C,
+//     white: #F8F9FA,
+//     dark-gray: #343A40,
+//     light-ray: #6C757D,
+// );
+
+$palette: (
+    green: (134, 80%, 44%),
+    blue: (211, 100%, 50%),
+    yellow: (45, 100%, 51%),
+    red: (354, 70%, 54%),
+    white: (210, 17%, 98%),
+    black: (0, 0%, 11%),
+    light-gray: (208, 7%, 46%),
+    dark-gray: (210, 10%, 23%),
+);
+
+// global mix
+@mixin rectangularBox(){
+    padding: 0rem 1.5rem 0rem 1.5rem;
+    border-radius: 3px;
+}
+
+@mixin sidebarBox($maxHeight){
+  display: flex;
+  align-items: center;
+  border-bottom: .2px solid $border-color;
+  min-width: 250px;
+  max-height: $maxHeight;
+  overflow: hidden;
+}
+
+@mixin sidebarText(){
+    opacity: 1;
+    transition: .25s;
+}
+
+@mixin boxShadowSmall(){
+    box-shadow: 0rem 0rem .35rem rgba($color: #000000, $alpha: .250);
+}
+
+@mixin boxShadowExtraSmall(){
+    box-shadow: 0rem 0rem .15rem rgba($color: #000000, $alpha: .350);
+}
+
+.d-flex{
+    display: flex;
+    align-items: center;
+}
+
+.loading-box{
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+
+.left-enter-active{
+    transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.left-enter-from,
+.left-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
+}
