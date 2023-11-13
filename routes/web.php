@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Admin\ProductController;
 use Illuminate\Http\Request;
-
+use App\Http\Middleware\AdminRoute;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,7 +32,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/logout', 'logout')->middleware('auth');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', AdminRoute::class])->prefix('admin')->group(function () {
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
         Route::get('/containers', function () {
@@ -66,5 +66,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}/verify/images', 'redirectOnRefresh');
         
         Route::get('/data', 'data')->name('data');
+    });
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('dashboard')->name('dashboard.')->group(function () {
+
+        Route::get('/', function () {
+            return Inertia::render('Customer/Dashboard/Profile');
+        })->name('containers');
     });
 });

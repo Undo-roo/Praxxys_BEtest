@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             // $table->tinyInteger('type'); // 1 customer - 0 admin Di ako sure kung ilan talaga magiging type nito kaya comment lang muna
-            // $table->boolean('isAdmin')->default(true);
+            $table->boolean('isAdmin')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

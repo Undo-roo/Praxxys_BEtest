@@ -21,8 +21,8 @@
 
 <script setup lang="ts">
 import Template from './Template.vue';
-import Card from '../Components/Widgets/Card.vue';
-import InfoBox from '../Components/Widgets/InfoBox.vue';
+import Card from '@/Components/Widgets/Card.vue';
+import InfoBox from '@/Components/Widgets/InfoBox.vue';
 
 const cardMaxWidth = '500px';
 </script>

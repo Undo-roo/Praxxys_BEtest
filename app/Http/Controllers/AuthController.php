@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function index(){
+    public function index(){        
         return Inertia::render('Authentication/Login');
     }
 
@@ -26,11 +26,11 @@ class AuthController extends Controller
 
             return redirect()->intended(route('dashboard.containers'));
         }
-        else if(Auth::attempt(['email' => $data['username'], 'password' => $data['password']], $data['remember'])){
-            $request->session()->regenerate();
+        // else if(Auth::attempt(['email' => $data['username'], 'password' => $data['password']], $data['remember'])){
+        //     $request->session()->regenerate();
 
-            return redirect()->intended(route('dashboard.containers'));
-        }
+        //     return redirect()->intended(route('dashboard.containers'));
+        // }
 
         return back()->withErrors([
             'username' => 'Credentials does not match in our records',

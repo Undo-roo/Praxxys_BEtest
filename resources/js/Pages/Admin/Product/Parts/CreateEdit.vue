@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import Template from '@/Dashboard/Template.vue';
+import Template from '@/Admin/Dashboard/Template.vue';
 import Card from '@/Components/Widgets/Card.vue';
 import Editor from '@tinymce/tinymce-vue'
 import ButtonIcon from '@/Components/Button.vue';

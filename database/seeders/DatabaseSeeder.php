@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Andrew Dacumos',
             'username' => 'admin',
             'email' => 'admin@admin.com',
+            'isAdmin' => true,
         ]);
 
         for($x = 1; $x < 5; $x++){

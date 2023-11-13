@@ -42,9 +42,9 @@
 
 <script setup lang="ts">
 import { ref, Ref, reactive, onBeforeMount } from 'vue';
-import Template from '@/Dashboard/Template.vue';
-import CustomDataTable from '../Components/ProductDataTable.vue';
-import Card from '../Components/Widgets/Card.vue';
+import Template from '@/Admin/Dashboard/Template.vue';
+import CustomDataTable from '@/Components/ProductDataTable.vue';
+import Card from '@/Components/Widgets/Card.vue';
 import moment from 'moment'
 import { usePage, Link } from '@inertiajs/vue3';
 import ButtonIcon from '@/Components/Button.vue';
