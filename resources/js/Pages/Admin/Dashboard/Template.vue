@@ -45,7 +45,7 @@ const navigations: Navigations[] = [
         button: true,
         label: 'Dashboard',
         icon: 'gauge',
-        link: '/dashboard/widgets',
+        link: '/admin/dashboard/widgets',
     },
     {
         label: 'Exam',
@@ -54,7 +54,7 @@ const navigations: Navigations[] = [
         dropdown: true,
         label: 'Product',
         icon: 'box',
-        prefix: '/product',
+        prefix: '/admin/product',
         menuLinks: [
             {
                 link: '/product',

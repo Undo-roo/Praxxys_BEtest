@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::controller(ProductController::class)->prefix('product')->middleware('auth')->name('product.')->group(function () {
+Route::controller(AdminProductController::class)->prefix('product')->middleware('auth')->name('product.')->group(function () {
     
     Route::post('/data', 'data')->name('data');
     Route::post('/remove', 'remove')->name('remove');

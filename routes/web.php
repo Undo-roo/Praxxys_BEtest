@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use App\Http\Middleware\AdminRoute;
 /*
@@ -22,30 +23,57 @@ Inertia::share('user', fn (Request $request) => $request->user()
     : null
 );
 
+Route::get('/', function(){
+    // dd(request()->user());
+    return Inertia::render('Landing');
+});
 
 Route::controller(AuthController::class)->group(function () {
     Route::middleware('guest')->group(function () {
-        Route::get('/', 'index')->name('login');
+        Route::get('/login', 'index')->name('login');
         Route::post('/attempt', 'login');
     });
 
     Route::post('/logout', 'logout')->middleware('auth');
 });
 
+/**
+ * Customer User Routes
+ */
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('dashboard')->name('dashboard.')->group(function () {
+
+        Route::get('/', function () {
+            return Inertia::render('Customer/Dashboard/Profile');
+        })->name('containers');
+    });
+
+    // ->middleware('auth')
+    Route::controller(ProductController::class)->prefix('product')->name('product.')->group(function () {
+    
+        Route::get('/', 'index')->name('index');
+    });
+});
+
+
+/**
+ * Admin User Routes
+ */
 Route::middleware(['auth', AdminRoute::class])->prefix('admin')->group(function () {
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
         Route::get('/containers', function () {
-            return Inertia::render('Dashboard/Containers');
+            return Inertia::render('Admin/Dashboard/Containers');
         })->name('containers');
 
         Route::get('/widgets', function () {
-            return Inertia::render('Dashboard/Widgets');
+            return Inertia::render('Admin/Dashboard/Widgets');
         })->name('widgets');
 
     });
 
-    Route::controller(ProductController::class)->prefix('product')->middleware('auth')->name('product.')->group(function () {
+    // ->middleware('auth')
+    Route::controller(AdminProductController::class)->prefix('product')->name('product.')->group(function () {
     
         Route::get('/', 'index')->name('index');
         Route::get('/create', 'create')->name('create');
@@ -66,14 +94,5 @@ Route::middleware(['auth', AdminRoute::class])->prefix('admin')->group(function 
         Route::get('/{id}/verify/images', 'redirectOnRefresh');
         
         Route::get('/data', 'data')->name('data');
-    });
-});
-
-Route::middleware(['auth'])->group(function () {
-    Route::prefix('dashboard')->name('dashboard.')->group(function () {
-
-        Route::get('/', function () {
-            return Inertia::render('Customer/Dashboard/Profile');
-        })->name('containers');
     });
 });
