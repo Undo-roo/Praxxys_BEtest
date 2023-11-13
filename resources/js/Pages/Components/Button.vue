@@ -1,45 +1,46 @@
 <template>
-    <button :disabled="disabled || loading" :class="[{solo: !label, square: square}, `${variant}-${color}`]">
+    <button 
+    :disabled="props.disabled || props.loading" 
+    :class="[{solo: !props.label, square: props.square}, `${props.variant}-${props.color}`]">
         <slot name="icon"></slot>
 
-        <i :class="`fa-${fontType} fa-${loading ? 'spinner' : icon} ${loading ? 'fa-spin' : ''}`" :style="`font-size: ${iconSize}`" v-if="icon"></i>
+        <i 
+        :class="`
+            fa-${props.icon?.type ?? 'solid'} fa-${props.loading ? 'spinner' : props.icon?.name} ${props.loading ? 'fa-spin' : ''}`" 
+            :style="`font-size: ${props.icon?.size ?? '18px'}`" 
+            v-if="icon">
+        
+        </i>
         {{ label }}
     </button>
 </template>
 
-<script setup>
-defineProps({
-    label: String,
-    variant: {
-        type: String, 
-        default: 'shaded',
-    },
-    fontType: {
-        type: String, 
-        default: 'solid',
-    },
-    icon: String,
-    iconSize: '18px',
-    color: {
-        type: String, 
-        default: 'red',
-    },
-    loading: {
-        type: Boolean,
-        default: false
-    },
-    square: Boolean,
-    disabled: {
-        type: Boolean,
-        default: false
-    },
+<script setup lang="ts">
+import { Icon } from '@/Utilities/Interfaces';
+
+interface Button {
+    label?: string,
+    variant?: string,
+    color?: string,
+    
+    icon?: Icon,
+    loading?: boolean,
+    square?: boolean,
+    disabled?: boolean,
+}
+
+const props = withDefaults( defineProps<Button>(), {
+    label: '',
+    variant: 'shaded',
+    color: 'red',
+    
+    loading: false,
+    square: false,
+    disabled: false,
 })
 </script>
 
 <style lang="scss" scoped>
-$label: v-bind(label);
-
-
 .solo{
     padding: 0rem 1rem 0rem 1rem;
 

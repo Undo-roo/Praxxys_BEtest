@@ -4,7 +4,7 @@
     </CreateEdit>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CreateEdit from './Parts/CreateEdit.vue'
 </script>
 

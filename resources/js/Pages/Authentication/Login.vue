@@ -25,10 +25,10 @@
     </Template>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Template from './Template.vue';
 import { Link, useForm } from '@inertiajs/vue3';
-import { watch, reactive, ref, computed } from 'vue';
+import { watch, reactive, ref, computed, onMounted } from 'vue';
 import Button from '@/Components/Button.vue';
 
 const fields = useForm({
@@ -50,9 +50,8 @@ const errorCheck = reactive({
 const disabledSubmit = computed(() =>{
     return errorCheck.username || errorCheck.password;
 })
-// const disabledSubmit = ref(false)
 
-const required = (text, field) =>{
+const required = (text: string, field: string) =>{
     if(text == ''){
         return 'The '+ field+' field is required';
     }
@@ -71,6 +70,8 @@ watch(() => fields.password, () => {
     fields.errors.password = msg;
     errorCheck.password = msg != '';
 })
+
+
 </script>
 
 <style lang="scss" scoped>

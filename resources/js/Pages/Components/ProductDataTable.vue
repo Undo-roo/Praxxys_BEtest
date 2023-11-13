@@ -12,6 +12,10 @@
             <slot name="action" :item="item"></slot>
         </template>
 
+        <template #item-dateTime="item">
+            {{ convertDateTime(item.dateTime) }}
+        </template>
+
         <template #pagination>
             <p style="margin: 0px; margin-right: 1rem;"> {{ rowsPerPage*(page-1) + 1 }}-{{ rowsPerPage*page }} of {{ serverItemsLength }}</p>
             <button :disabled="!link.url" :class="[{active: link.active} , 'pagination-btn']" v-for="(link) in links" @click="updateItems(link.url)">
@@ -23,7 +27,7 @@
     <EasyDataTable
         v-else
         :headers="props.columns"
-        :items="props.datas"
+        :items="props.items"
     >
         <template #item-action="{ item }">
             <slot name="action"></slot>
@@ -31,61 +35,48 @@
     </EasyDataTable>
 </template>
 
-<script setup>
-import { ref, watch } from 'vue'
+<script setup lang="ts">
+import { Ref, ref, watch } from 'vue'
 import EasyDataTable from 'vue3-easy-data-table';
 import 'vue3-easy-data-table/dist/style.css';
-import moment from 'moment'
+import moment from 'moment';
+import { Product, Category } from '@/Utilities/Classes';
+import { Pagination } from '@/Utilities/Type/Pagination';
 
 const emits = defineEmits(['Common Emits'])
 
-const props = defineProps({
-    columns: {
-        type: Array,
-        default(){
-            return [];
-        }
-    },
-    datas: {
-        type: Array,
-        default(){
-            return [];
-        }
-    },
-    options: {
-        type: Object,
-        default(){
-            return {};
-        }
-    },
-    links: {
-        type: Array,
-        default: [],
-    },
-    loading: {
-        type: Boolean,
-        default: false,
-    },
 
-    serverItemsLengthInit: {
-        type: Number,
-        default: 0,
-    },
-    requestData:{
-        type: Object,
-        default(){
-            return {};
-        }
-    },
+interface Items extends Product{
+    category: Category
+}
+
+interface Response extends Pagination{
+    data: Items[],
+} 
+
+interface DataTable{
+    columns?: any[],
+    items: Product[],
+    options?: any[],
+    links: any[],
+    loading?: boolean,
+    
+    serverItemsLengthInit?: number,
+    requestData?: {}, 
+}
+
+const props = withDefaults( defineProps<DataTable>(), {
+    loading: false,
+    serverItemsLengthInit: 0,
 })
 
-
 const isLoading = ref(props.loading);
-const items = ref(props.datas);
+const items = ref(props.items);
 const serverItemsLength = ref(props.serverItemsLengthInit);
 const rowsPerPage = ref(20);
 const page = ref(1);
 const links = ref(props.links);
+
 
 watch(() => props.links, (value) => { 
     links.value = props.links 
@@ -96,41 +87,32 @@ watch( () => props.serverItemsLengthInit, () => {
     serverItemsLength.value = props.serverItemsLengthInit
 });
 
-watch(() => props.datas, (value) => { 
-    items.value = props.datas
+watch(() => props.items, (value) => { 
+    items.value = props.items
     page.value = 1
 
 }, { deep: true });
 
-const convertDateTime = (date) =>{ 
+const convertDateTime = (date: string) =>{ 
     return moment(date).format('MMMM Do YYYY, h:mm a')
 }
 
-const updateItems = (url) =>{
+const updateItems = async (url: string) =>{
     isLoading.value = true
 
-    axios.post(url, props.requestData)
-    .then( (res) => {
-        let response = res.data
-
-        items.value = response.data
-        serverItemsLength.value = response.total
-        links.value = response.links
-        page.value = response.current_page
+    const { data, status } = await axios.post<Response[]>(url, props.requestData)
+    
+    items.value = data.data
+    serverItemsLength.value = data.total
+    links.value = data.links
+    page.value = data.current_page
 
 
-        items.value = response.data.map((item) => {
-            item.dateTime = convertDateTime(item.dateTime)
-            return item
-        })
-        
-        links.value[0].label = 'Prev';
-        links.value[links.value.length-1].label = 'Next';
-    })
-    .catch( (error) =>{
-        isLoading.value = false;
-        console.log(error)
-    })
+    items.value = data.data
+    
+    links.value[0].label = 'Prev';
+    links.value[links.value.length-1].label = 'Next';
+    
     isLoading.value = false;
 }
 </script>

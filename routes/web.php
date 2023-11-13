@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/verify/images', 'redirectOnCreateRefresh');
         Route::get('/{id}/verify/images', 'redirectOnRefresh');
-    
+        
+        Route::get('/data', 'data')->name('data');
     });
 });

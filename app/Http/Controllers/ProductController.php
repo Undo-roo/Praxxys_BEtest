@@ -16,6 +16,7 @@ class ProductController extends Controller
     public function index(){
 
         $categories = Category::select('id', 'title')->get()->toArray();
+
         return Inertia::render('Product/Index', [
             'categories' => $categories,
         ]);
@@ -49,7 +50,7 @@ class ProductController extends Controller
         }
 
         $products = $products->with('category') ->orderBy('created_at', 'DESC')->paginate(20);
-
+        
         return response()->json($products);
     }
 
@@ -133,7 +134,6 @@ class ProductController extends Controller
 
         $product = Product::find($request->id);
 
-        dd($product);
         $product->name = $request->name;
         $product->category_id = $request->category_id;
         $product->description = $request->description;

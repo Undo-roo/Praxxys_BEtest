@@ -1,7 +1,7 @@
 <template>
     <div class="dashboard">
         <Sidebar 
-            :close="close" :avatar-name="avatarName" logo-name="Label Logo"
+            :close="close" :avatar="{name: avatarName}" :logo="{ name: 'Label Logo' }"
             :navigations="navigations"
         />
 
@@ -16,16 +16,20 @@
     </div>
 </template>
 
-<script setup >
+<script setup lang="ts">
 import { ref } from 'vue';
 import Sidebar from './Parts/Sidebar.vue'
 import Header from './Parts/Header.vue'
 import { usePage } from '@inertiajs/vue3' 
+import { Navigations, User } from '@/Utilities/Interfaces'
+
 
 let close = ref(false);
 
 // let avatarName = 'Andrew Dacumos';
-let avatarName = usePage().props.user.name 
+
+let user: User = usePage().props.user as User;
+let avatarName: string = user.name as string
 
 const triggerClose = () =>{
     if(screen.width < 934){
@@ -36,31 +40,13 @@ const triggerClose = () =>{
     }
 }
 
-const navigations = [
+const navigations: Navigations[] = [
     {
         button: true,
         label: 'Dashboard',
         icon: 'gauge',
         link: '/dashboard/widgets',
     },
-    // {
-    //     dropdown: true,
-    //     label: 'Dashboard',
-    //     icon: 'gauge',
-    //     prefix: '/dashboard',
-    //     menuLinks: [
-    //         {
-    //             link: '/dashboard/containers',
-    //             label: 'Containers', 
-    //             component: 'Dashboard/Containers',
-    //         },
-    //         {
-    //             link: '/dashboard/widgets',
-    //             label: 'Widgets', 
-    //             component: 'Dashboard/Widgets',
-    //         }
-    //     ],
-    // },
     {
         label: 'Exam',
     },
@@ -82,12 +68,6 @@ const navigations = [
             }
         ],
     },
-    // {
-    //     button: true,
-    //     label: 'Product',
-    //     icon: 'box',
-    //     link: '/product',
-    // },
     {
         button: true,
         label: 'Video Bonus',

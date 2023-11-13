@@ -1,36 +1,32 @@
 <template>
-    <div :class="[{close: close}, 'sidebar']">
+    <div :class="[{close: props.close}, 'sidebar']">
 
         <Link class="brand-box" v-if="!noLogo" href="#">
-           <img :src="logoImg" height="35" alt="">
-           <span v-if="logoName" class="logo-text">{{ logoName }}</span>
+           <img :src="props.logo?.img ?? '/logo-placeholder2.png'" height="35" alt="">
+           <span v-if="props.logo?.name" class="logo-text">{{ props.logo.name }}</span>
         </Link>
 
         <div class="sidebar-content">
-          <div class="avatar-box" v-if="!noAvatar">
-            <div class="avatar-img" :style="`background-image: url('/${avatarImg}')`"></div>
-            <Link class="avatar-name" href="#">{{ avatarName }}</Link>
+          <div class="avatar-box" v-if="!props.noAvatar">
+            <div class="avatar-img" :style="`background-image: url('/${props.avatar?.img ?? 'cat.jpg'}')`"></div>
+            <Link class="avatar-name" href="#">{{ props.avatar?.name ?? 'Anonymous Catto' }}</Link>
           </div>
 
           <div class="search-box" v-if="!noSearch">
             <input type="text" >
-            <ButtonIcon icon="magnifying-glass" square style="border: 1px solid #ff7575; border-left: none; border-radius: 0px 3px 3px 0px;" />
+            <ButtonIcon :icon="{ name: 'magnifying-glass'}" square style="border: 1px solid #ff7575; border-left: none; border-radius: 0px 3px 3px 0px;" />
           </div>
 
-          <!-- <button class="sidebar-btn active">
-            <i class="fa-solid fa-gauge"></i>
-            <p class="btn-label"> Dashboard</p>
-          </button> -->
           <div v-for="navigation in navigations">
             <SidebarButton 
-              v-if="navigation.dropdown" :active="$page.url.startsWith(navigation.prefix)" 
-              :menuLinks="navigation.menuLinks" :label="navigation.label" :icon="navigation.icon" 
-              :fontType="navigation.fontType" dropdown 
+              v-if="navigation.dropdown" :active="$page.url.startsWith(navigation.prefix ?? '')" 
+              :menuLinks="navigation.menuLinks" :label="navigation.label" :icon="{ name: navigation.icon ?? '' }" 
+              :fontType="navigation.fontType" dropdown
             />
 
             <SidebarButton 
               v-else-if="navigation.button" :active="$page.url == navigation.link" :link="navigation.link"
-              :label="navigation.label" :icon="navigation.icon" :fontType="navigation.fontType" 
+              :label="navigation.label" :icon="{ name: navigation.icon ?? '' }"  :fontType="navigation.fontType" 
             />
 
             <h4 v-else class="sidebar-label">{{ navigation.label }}</h4> 
@@ -47,39 +43,31 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import ButtonIcon from '@/Components/Button.vue';
 import SidebarButton from './SidebarButton.vue';
+import { Avatar, Logo, Navigations } from '@/Utilities/Interfaces'
 // import SidebarDropdown from './Parts/SidebarDropdown.vue';
 
-defineProps({
-  close: Boolean,
-  noLogo: Boolean,
-  noAvatar: Boolean,
-  noSearch: Boolean,
 
-  avatarImg:{
-    type: String,
-    default: 'cat.jpg'
-  },
-  avatarName:{
-    type: String,
-    default: 'Anonymous Catto'
-  },
+interface Sidebar{
+  close?: boolean,
+  noLogo?: boolean,
+  noAvatar?: boolean,
+  noSearch?: boolean,
 
-  logoName: String,
-  logoImg:{
-    type: String,
-    default: '/logo-placeholder2.png'
-  },
+  avatar?: Avatar,
+  logo?: Logo,
 
-  navigations: {
-    type: Array,
-    default() {
-      return [];
-    }
-  },
+  navigations?: Navigations[]
+}
+
+const props = withDefaults( defineProps<Sidebar>(), {
+  close: false,
+  noLogo: false,
+  noAvatar: false,
+  noSearch: false,
 })
 </script>
 

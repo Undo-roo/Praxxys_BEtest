@@ -1,7 +1,7 @@
 <template>
     <div :class="['info-box']">
-        <div :class="`shaded-${boxColor}`">
-            <i :class="`fa-${iconType} fa-${icon}`" v-if="icon"></i>
+        <div :class="`shaded-${props.color}`">
+            <i :class="`fa-${props.icon.type ?? 'solid'} fa-${props.icon.name}`" v-if="props.icon"></i>
         </div>
         <div class="info-content">
             <p>{{ label }}</p>
@@ -10,29 +10,22 @@
     </div>
 </template>
 
-<script setup>
-const props = defineProps({
-    cardLabel: String,
-    cardMaxWidth: String,
+<script setup lang="ts">
+import { Icon } from '@/Utilities/Interfaces'
 
-    iconType: {
-        type: String, 
-        default: 'solid',
-    },
-    icon: {
-        type: String,
-        required: true,
-    },
-    iconSize: '',
+interface InfoBox {
+    icon?: Icon
 
-    boxColor: {
-        type: String,
-        default: 'red'
-    },
+    color?: string,
 
-    label: String,
-    text: String,
+    label?: string,
+    text?: string,
+}
 
+const props = withDefaults( defineProps<InfoBox>(), {
+    color: 'red',
+    label: '',
+    text: '',
 })
 </script>
 

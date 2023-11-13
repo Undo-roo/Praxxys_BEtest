@@ -1,10 +1,10 @@
 <template>
     <header>
-        <Button @click="closeSidebar" variant="flat" icon="bars" />
+        <Button @click="closeSidebar" variant="flat" :icon="{ name: 'bars'}" />
     </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Button from '@/Components/Button.vue';
 
 const emits = defineEmits(['closeSidebar'])

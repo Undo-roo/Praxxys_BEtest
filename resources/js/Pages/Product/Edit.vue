@@ -4,9 +4,10 @@
     </CreateEdit>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CreateEdit from './Parts/CreateEdit.vue'
 import { usePage } from '@inertiajs/vue3';
+import { Product } from '@/Utilities/Classes';
 
-const product = usePage().props.product;
+const product: Product = usePage().props.product as Product;
 </script>

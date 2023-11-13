@@ -3,10 +3,12 @@
         <div class="product-box">
             
             <Card 
-                card-label="Product List"
+                label="Product List"
                 minimizable
             >
+            
             <br>
+
                 <div class="d-flex" style="margin-bottom: 1rem;">
                     <p>Select Category</p>
                     <select v-model="requestData.filterBy">
@@ -17,19 +19,20 @@
                     <input type="text" placeholder="Search by Name and Description" v-model="requestData.keyword">
                     <button class="filter-btn" @click="filterData()"> Filter </button>
                 </div>
+                
                 <CustomDataTable 
-                    :columns="columns" :datas="products" :loading="isLoading"
+                    :columns="columns" :items="products" :loading="isLoading"
                     :links="links" :server-items-length-init="serverItemsLength"
                     :request-data="requestData"
                 >
-                    <template #action="{ item }">
+                    <template #action="{ item } : any ">
                         <button @click="deleteData(item.name, item.id)" class="trash-btn"><i class="fa-solid fa-trash"></i></button>
                         <Link class="edit-btn" :href="`/product/edit/${item.id}`"><i class="fa-solid fa-pen-to-square"></i></Link>
                     </template>
                 </CustomDataTable>
 
                 <template #footer>
-                    <Link class="create-btn" href="/product/create"> <ButtonIcon label="Create" icon="plus" iconSize="15px" color="dark-gray" /> </Link>
+                    <Link class="create-btn" href="/product/create"> <ButtonIcon label="Create" :icon="{ name: 'plus'} " iconSize="15px" color="dark-gray" /> </Link>
                 </template>
             </Card>
         </div>
@@ -37,14 +40,30 @@
     </Template>
 </template>
 
-<script setup>
-import { ref, onMounted, reactive } from 'vue';
-import Template from '../Dashboard/Template.vue';
-import CustomDataTable from '../Components/CustomDataTable.vue';
+<script setup lang="ts">
+import { ref, Ref, reactive, onBeforeMount } from 'vue';
+import Template from '@/Dashboard/Template.vue';
+import CustomDataTable from '../Components/ProductDataTable.vue';
 import Card from '../Components/Widgets/Card.vue';
 import moment from 'moment'
 import { usePage, Link } from '@inertiajs/vue3';
 import ButtonIcon from '@/Components/Button.vue';
+import { Pagination, Links } from '@/Utilities/Type/Pagination';
+import { Product, Category } from '@/Utilities/Classes';
+import axios from 'axios';
+
+interface CategorySelect {
+    id: number,
+    title: string,
+}
+
+interface Items extends Product{
+    category: Category
+}
+
+interface Response extends Pagination{
+    data: Items[],
+} 
 
 const columns = [
   { text: "Name", value: "name" },
@@ -54,51 +73,46 @@ const columns = [
   { text: "Operation", value: "action"},
 ];
 
-const products = ref([]);
+const products: Ref<Items[]> = ref([]);
 
-const links = ref([]);
+const links: Ref<Links> = ref([]);
 const isLoading = ref(false);
-const serverItemsLength = ref(0)
-const options = usePage().props.categories
+const serverItemsLength = ref(0);
+const options: CategorySelect[] = usePage().props.categories as CategorySelect[];
 
 const requestData = reactive({
     keyword: '',
     filterBy: ''
 });
 
-
-const convertDateTime = (date) =>{ 
-    return moment(date).format('MMMM Do YYYY, h:mm a')
-}
-
 const filterData = async () =>{
     isLoading.value = true
 
-    await axios.post('/api/product/data', requestData)
-    .then( (res) => {
-        let response = res.data
+    try{
+        const { data, status } = await axios.post<Response>('/api/product/data', requestData)
 
-        products.value = response.data.map((item) => {
-            item.dateTime = convertDateTime(item.dateTime)
-            return item
-        })
+        // products.value = data.data.map((item: Product) => {
+        //     item.dateTime = convertDateTime(item.dateTime)
+        //     return item
+        // })
 
-        links.value = response.links
+        products.value = data.data as Items[]
+
+        links.value = data.links
 
         links.value[0].label = 'Prev';
         links.value[links.value.length-1].label = 'Next';
 
-        serverItemsLength.value = response.total
-    })
-    .catch( (error) =>{
+        serverItemsLength.value = data.total
+    }
+    catch (error: unknown) {
         console.log(error)
-        isLoading.value = false
-    })
+    }
 
     isLoading.value = false
 }
 
-const deleteData = async (name, id) =>{
+const deleteData = async (name: string, id: number) =>{
     isLoading.value = true
 
     if(confirm("Are you sure you want to delete " + name)){
@@ -115,31 +129,23 @@ const deleteData = async (name, id) =>{
     isLoading.value = false
 }
 
-onMounted(async () =>{
-    isLoading.value = true
+onBeforeMount(async () =>{
 
-    await axios.post('/api/product/data', requestData)
-    .then( (res) => {
-        let response = res.data
+    try{
+        const { data, status } = await axios.post<Response>('/api/product/data', requestData)
 
-        products.value = response.data.map((item) => {
-            item.dateTime = convertDateTime(item.dateTime)
-            return item
-        })
+        products.value = data.data
 
-        links.value = response.links
+        links.value = data.links
 
         links.value[0].label = 'Prev';
         links.value[links.value.length-1].label = 'Next';
 
-        serverItemsLength.value = response.total
-    })
-    .catch( (error) =>{
+        serverItemsLength.value = data.total
+    }
+    catch (error: unknown) {
         console.log(error)
-        isLoading.value = false
-    })
-
-    isLoading.value = false
+    }
 })
 </script>
 

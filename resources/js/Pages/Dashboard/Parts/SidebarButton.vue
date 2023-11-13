@@ -1,14 +1,14 @@
 <template>
 
     <Link v-if="!props.dropdown" :class="[{active: props.active}, 'sidebar-btn d-flex']" :href="props.link">
-      <i :class="`fa-${fontType} fa-${icon}`"></i>
+      <i :class="`fa-${props.icon?.type ?? 'solid'} fa-${props.icon?.name}`"></i>
       <p class="btn-label"> {{ props.label }}</p>
     </Link>
 
     <div v-else :class="[{open: open}, 'dropdown-box']">
         <button :class="[{active: props.active}, 'dropdown-btn']" @click="open = !open">
             <div class="dropdown-content d-flex">
-                <i :class="`fa-${props.fontType} fa-${props.icon}`"></i>
+                <i :class="`fa-${props.icon?.type ?? 'solid'} fa-${props.icon?.name}`"></i>
                 <p class="btn-label"> {{ props.label }}</p>
                 <i class="fa-solid fa-chevron-down"></i>
             </div>
@@ -24,35 +24,24 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
+import { Icon, MenuLinks } from '@/Utilities/Interfaces';
 
-const props = defineProps({
-    label: String,
-    fontType: {
-        type: String, 
-        default: 'solid',
-    },
-    icon: String,
-    iconSize: '',
+interface SidebarMenu{
+    label: string,
+    icon?: Icon,
+    active?: boolean,
+    dropdown?: boolean,
+    link?: string,
+    menuLinks?: MenuLinks[]
+}
 
-    active: {
-        type: Boolean,
-        default: false,
-    },
-    dropdown: Boolean,
-    link: {
-        type: String, 
-        default: '#',
-    },
-
-    menuLinks: {
-        type: Array,
-        default() {
-            return [];
-        }
-    },
+const props = withDefaults( defineProps<SidebarMenu>(), {
+    active: false,
+    dropdown: false,
+    link: '#',
 })
 
 let open = ref(props.active)

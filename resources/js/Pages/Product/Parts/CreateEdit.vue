@@ -9,10 +9,12 @@
                     <span class="error-text">{{ fields.errors.name }}</span>
 
                     <h3> Category </h3>
+
                     <select :class="{error: fields.errors.category}" v-model="fields.category">
                         <option disabled default value=""> Select a Category </option>
                         <option v-for="option in options" :value="option.id">{{ option.title }}</option>
                     </select>
+
                     <span class="error-text">{{ fields.errors.category }}</span>
 
                     <h3> Description </h3>
@@ -24,7 +26,7 @@
                     />
                     <span class="error-text">{{ fields.errors.description }}</span>
 
-                    <ButtonIcon type="button" @click="verifyDetails()" :loading="fields.processing" :disabled="disabledSubmitDetails || doneFeilds.details" class="verify-btn" :icon="doneFeilds.details ? 'check-double' : 'check'" label="Verify" :color="doneFeilds.details ? 'green' : 'dark-gray'" />
+                    <ButtonIcon type="button" @click="verifyDetails()" :loading="fields.processing" :disabled="disabledSubmitDetails || doneFeilds.details" class="verify-btn" :icon="{ name: doneFeilds.details ? 'check-double' : 'check' }" label="Verify" :color="doneFeilds.details ? 'green' : 'dark-gray'" />
                 </div>
             </Card>
 
@@ -34,12 +36,12 @@
                     <div class="form-box">
                         <div class="image-show d-flex">
                             <div v-for="(preview, ind) in previews" class="image-box" :style="`background-image: url('${preview}')`">
-                                <ButtonIcon type="button"  @click="deleteFile(ind)" icon="xmark" square />
+                                <ButtonIcon type="button"  @click="deleteFile(ind)" :icon="{name: 'xmark'}" square />
                             </div>
                         </div>
                         <span class="error-text">{{ fields.errors.images }}</span>
                         <input @change="addFile($event)" type="file" accept=".jpg,.png,.jpeg" >
-                        <ButtonIcon type="button" @click="verifyImage()" :loading="fields.processing" :disabled="detailsCheck.images || doneFeilds.image || !doneFeilds.details" class="verify-btn" :icon="doneFeilds.image ? 'check-double' : 'check'" label="Verify" :color="doneFeilds.image ? 'green' : 'dark-gray'" />
+                        <ButtonIcon type="button" @click="verifyImage()" :loading="fields.processing" :disabled="detailsCheck.images || doneFeilds.image || !doneFeilds.details" class="verify-btn" :icon="{ name: doneFeilds.details ? 'check-double' : 'check' }" label="Verify" :color="doneFeilds.image ? 'green' : 'dark-gray'" />
                     </div>
                 </Card>
             </Transition>
@@ -51,7 +53,7 @@
 
                         <VueDatePicker v-model="fields.dateTime" uid="demo" />
                         <span class="error-text">{{ fields.errors.dateTime }}</span>
-                        <ButtonIcon :loading="fields.processing" :disabled="!doneFeilds.details || !doneFeilds.image || detailsCheck.dateTime" class="verify-btn" :icon="doneFeilds.dateTime ? 'check-double' : 'check'" label="Submit" color="blue" />
+                        <ButtonIcon :loading="fields.processing" :disabled="!doneFeilds.details || !doneFeilds.image || detailsCheck.dateTime" class="verify-btn" :icon="{ name: doneFeilds.details ? 'check-double' : 'check' }" label="Submit" color="blue" />
                     </div>
                 </Card>
             </Transition>
@@ -59,13 +61,13 @@
     </Template>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Template from '@/Dashboard/Template.vue';
 import Card from '@/Components/Widgets/Card.vue';
 import Editor from '@tinymce/tinymce-vue'
 import ButtonIcon from '@/Components/Button.vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { reactive, watch, computed, ref } from 'vue';
+import { InertiaForm, Link, useForm, usePage } from '@inertiajs/vue3';
+import { reactive, watch, computed, Ref, ref } from 'vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import moment from 'moment';
 import '@vuepic/vue-datepicker/dist/main.css';
@@ -85,10 +87,23 @@ const props = defineProps({
 const verifyDetailsLink = props.product ? '/product/'+props.product.id+'/verify/details' : '/product/verify/details'
 const verifyImageLink = props.product ? '/product/'+props.product.id+'/verify/images' : '/product/verify/images'
 
-const previews = ref([]);
+const previews: Ref<string[]> = ref([]);
 const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
 
-const fields = useForm({
+interface CategorySelect {
+    id: number,
+    title: string,
+}
+
+const fields: InertiaForm<{
+    name: string,
+    category: string,
+    description: string,
+    dateTime?: string,
+    images: File[],
+    location: string,
+    id?: number
+}> = useForm({
     name: props.product ? props.product.name : '',
     category: props.product ? props.product.category_id : '',
     description: props.product ? props.product.description : '',
@@ -111,8 +126,7 @@ const doneFeilds = reactive({
     dateTime: !!props.product,
 })
 
-console.log(doneFeilds);
-console.log(detailsCheck);
+
 const showFeilds = reactive({
     image: !!props.product,
     dateTime: !!props.product,
@@ -142,35 +156,42 @@ const verifyImage = () => {
     showFeilds.dateTime = true
 }
 
-const previewImage = (file) =>{
+const previewImage = (file: File) =>{
     if(file){
         let reader = new FileReader
 
         reader.onload = e =>{
-            // previews[this.field].preview = e.target.result
-            previews.value.push(e.target.result)
+            // previews[this.field].preview = e.target.
+            if(e.target){
+                previews.value.push(e.target.result as string)
+            }
         }
 
         reader.readAsDataURL(file)
     }
 }
 
-const addFile = (event) => {
+const addFile = (event: Event) => {
+    const target = event.target as HTMLInputElement;
 
-    if(event.target.files[0]){
-        let filePath = event.target.files[0].name
-        
-        if(allowedExtensions.exec(filePath)){
-            fields.images.push(event.target.files[0])
-            previewImage(event.target.files[0])
-        }
-        else{
-            alert("Invalid Image");
+    if(target){
+        if(target.files){
+            const file: File = target.files[0];
+
+            let filePath = file.name
+
+            if(allowedExtensions.exec(filePath)){
+                fields.images.push(target.files[0])
+                previewImage(target.files[0])
+            }
+            else{
+                alert("Invalid Image");
+            }
         }
     }
 }
 
-const deleteFile = (ind) =>{
+const deleteFile = (ind: number) =>{
     fields.images.splice(ind, 1);
     previews.value.splice(ind, 1);
 }
@@ -179,7 +200,7 @@ const disabledSubmitDetails = computed(() =>{
     return detailsCheck.name || detailsCheck.category || detailsCheck.description;
 })
 
-const required = (text, field) =>{
+const required = (text: string = "", field: string) =>{
     if(text == '' || text == null){
         return 'The '+ field+' field is required';
     }
@@ -244,7 +265,7 @@ watch(() => fields.images, () => {
 }, {deep: true})
 
 
-const options = usePage().props.categories
+const options: CategorySelect[] = usePage().props.categories as CategorySelect[]
 const init = {
     menubar: false,
     resize: false,

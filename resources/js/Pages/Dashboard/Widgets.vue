@@ -9,17 +9,17 @@
             </Card>
 
             <div class="grid-4">
-                <InfoBox icon="house" label="Sample1" :text="Math.floor(Math.random() * 1000) + 1" />
-                <InfoBox icon="house" label="Sample2" :text="Math.floor(Math.random() * 1000) + 1" boxColor="blue" />
-                <InfoBox icon="house" label="Sample3" :text="Math.floor(Math.random() * 1000) + 1" boxColor="green" />
-                <InfoBox icon="house" label="Sample4" :text="Math.floor(Math.random() * 1000) + 1" boxColor="dark-gray" />
+                <InfoBox :icon="{ name: 'house' }" label="Sample1" :text=" '' + Math.floor(Math.random() * 1000) + 1" />
+                <InfoBox :icon="{ name: 'house' }" label="Sample2" :text=" '' + Math.floor(Math.random() * 1000) + 1" boxColor="blue" />
+                <InfoBox :icon="{ name: 'house' }" label="Sample3" :text=" '' + Math.floor(Math.random() * 1000) + 1" boxColor="green" />
+                <InfoBox :icon="{ name: 'house' }" label="Sample4" :text=" '' + Math.floor(Math.random() * 1000) + 1" boxColor="dark-gray" />
             </div>
 
         </div>
     </Template>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Template from './Template.vue';
 import Card from '../Components/Widgets/Card.vue';
 import InfoBox from '../Components/Widgets/InfoBox.vue';
