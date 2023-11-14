@@ -17,8 +17,5 @@ const navigations: {label: string, route: string }[] = [
 
 <style lang="scss" scoped>
 .main-page{
-    background-color: blue;
-    flex: 1 1;
-
 }
 </style>

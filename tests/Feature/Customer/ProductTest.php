@@ -1,22 +1,20 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Customer;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class CustomerAuthenticationTest extends TestCase
+class ProductTest extends TestCase
 {
     /**
      * A basic feature test example.
      */
     public function test_example(): void
     {
-        $response = $this->get('/login');
+        $response = $this->get('/');
 
         $response->assertStatus(200);
-
-        // $response = $this->post('/attempt', );
     }
 }

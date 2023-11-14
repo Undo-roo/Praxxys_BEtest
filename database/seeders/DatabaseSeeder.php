@@ -26,6 +26,13 @@ class DatabaseSeeder extends Seeder
             'isAdmin' => true,
         ]);
 
+        User::factory()->create([
+            'name' => 'John Diyan',
+            'username' => 'customer',
+            'email' => 'customer@gmail.com',
+            'isAdmin' => false,
+        ]);
+
         for($x = 1; $x < 5; $x++){
             Category::create([
                 'title' => 'Category'.$x,

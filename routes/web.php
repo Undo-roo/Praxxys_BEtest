@@ -37,12 +37,23 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/logout', 'logout')->middleware('auth');
 });
 
+//  
+Route::controller(AuthController::class)->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('/login', 'index')->name('login');
+        Route::post('/attempt', 'login');
+    });
+
+    Route::post('/logout', 'logout')->middleware('auth');
+});
+
 /**
  * Customer User Routes
  */
 Route::middleware(['auth'])->group(function () {
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
+        //dashboard.<route name>
         Route::get('/', function () {
             return Inertia::render('Customer/Dashboard/Profile');
         })->name('containers');
@@ -59,9 +70,11 @@ Route::middleware(['auth'])->group(function () {
 /**
  * Admin User Routes
  */
-Route::middleware(['auth', AdminRoute::class])->prefix('admin')->group(function () {
+Route::middleware(['auth', AdminRoute::class])->prefix('admin')->name('admin.')->group(function () {
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
+
+        // admin.dashboard.<route name>
         Route::get('/containers', function () {
             return Inertia::render('Admin/Dashboard/Containers');
         })->name('containers');
