@@ -21,7 +21,7 @@
             <SidebarButton 
               v-if="navigation.dropdown" :active="$page.url.startsWith(navigation.prefix ?? '')" 
               :menuLinks="navigation.menuLinks" :label="navigation.label" :icon="{ name: navigation.icon ?? '' }" 
-              :fontType="navigation.fontType" dropdown
+              :fontType="navigation.fontType" dropdown :prefix="navigation.prefix"
             />
 
             <SidebarButton 

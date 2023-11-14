@@ -25,3 +25,13 @@
 @mixin boxShadowExtraSmall(){
     box-shadow: 0rem 0rem .15rem rgba($color: #000000, $alpha: .350);
 }
+
+@mixin maxSquareBox($dimension){
+    max-height: $dimension;
+    max-width: $dimension;
+}
+
+@mixin squareBox($dimension){
+    height: $dimension;
+    width: $dimension;
+}

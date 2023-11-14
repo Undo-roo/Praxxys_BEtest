@@ -1,6 +1,6 @@
 <template>
     <Template>
-        <form @submit.prevent="fields.post('/product/'+props.link)" class="create-box">
+        <form @submit.prevent="fields.post('/admin/product/'+props.link)" class="create-box">
             <Card card-label="Product Details" card-max-width="800px">
                 <div class="form-box">
 
@@ -80,12 +80,12 @@ const props = defineProps({
     },
     location: {
         type: String,
-        default: 'Product/Create'
+        default: 'Admin/Product/Create'
     },
 })
 
-const verifyDetailsLink = props.product ? '/product/'+props.product.id+'/verify/details' : '/product/verify/details'
-const verifyImageLink = props.product ? '/product/'+props.product.id+'/verify/images' : '/product/verify/images'
+const verifyDetailsLink = props.product ? '/admin/product/'+props.product.id+'/verify/details' : '/admin/product/verify/details'
+const verifyImageLink = props.product ? '/admin/product/'+props.product.id+'/verify/images' : '/admin/product/verify/images'
 
 const previews: Ref<string[]> = ref([]);
 const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;

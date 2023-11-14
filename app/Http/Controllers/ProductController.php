@@ -10,7 +10,18 @@ use App\Models\Category;
 
 class ProductController extends Controller
 {
+
+    // Will need to create a ProductRepo
+
+    protected $prefix = 'Customer/Product/';
+
     public function index(){
-        
+        $products = Product::limit(30)->get()->append('path');
+
+        return Inertia::render("{$this->prefix}Index", compact('products'));
+    }
+
+    public function show(Product $product){
+        return Inertia::render("{$this->prefix}Show", compact('product'));
     }
 }

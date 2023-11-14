@@ -7,14 +7,18 @@
         <img src="/logo-placeholder.png" alt="Logo place holder" height="50">
 
         <nav>
-            <Link :class="{ active: '/cart' === $page.url}" :href="'#'"> <i class="fa-solid fa-cart-shopping" style="margin-right: .35rem;"></i> Cart</Link>
-            <Link :class="{ active: '/login' === $page.url}" :href="'/login'">Login</Link>
+            <Link :class="{ active: '/cart' === $page.url}" :href="'/cart'"> <i class="fa-solid fa-cart-shopping" style="margin-right: .35rem;"></i> Cart</Link>
+            <Link v-if="user" :class="{ active: '/dashboard' === $page.url}" :href="'/dashboard'">{{ user.username }}</Link>
+            <Link v-else :class="{ active: '/login' === $page.url}" :href="'/login'">Login</Link>
         </nav>
     </header>
 </template>
 
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+import { User } from '@/Utilities/Interfaces';
+
+const user: User = usePage().props.user as User;
 
 interface MainHeader{
     navigations: {label: string, route: string }[],

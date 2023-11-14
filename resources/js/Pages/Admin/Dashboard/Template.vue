@@ -57,14 +57,14 @@ const navigations: Navigations[] = [
         prefix: '/admin/product',
         menuLinks: [
             {
-                link: '/product',
+                link: '/',
                 label: 'List', 
-                component: 'Product/Index',
+                component: 'Admin/Product/Index',
             },
             {
-                link: '/product/create',
+                link: '/create',
                 label: 'Create', 
-                component: 'Product/Create',
+                component: 'Admin/Product/Create',
             }
         ],
     },

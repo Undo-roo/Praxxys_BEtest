@@ -22,6 +22,7 @@ class Product{
     category_id!: number;
     updated_at!: string;
     created_at!: string;
+    price!: number;
 }
 
 export {

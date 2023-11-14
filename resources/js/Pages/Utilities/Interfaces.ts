@@ -43,4 +43,38 @@ interface User{
 
 }
 
-export type { Icon, Avatar, Logo, MenuLinks, Navigations, User };
+interface Product{
+    id: number,
+    name: string,
+    description: string,
+    dateTime: string,
+    category_id: number,
+    updated_at: string,
+    created_at: string,
+    price: number,
+    path?: string,
+
+}
+
+interface Category{
+    id: number;
+    title: string;
+    description: string;
+    folder: string;
+    updated_at: string;
+    created_at: string;
+}
+
+
+interface Cart{
+    created_at: string,
+    updated_at: string,
+    id: number,
+    product_id: number,
+    user_id: number,
+    quantity: number,
+    total: number,
+}
+
+
+export type { Icon, Avatar, Logo, MenuLinks, Navigations, User, Product, Cart };

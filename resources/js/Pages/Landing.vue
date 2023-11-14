@@ -1,7 +1,7 @@
 <template>
-    <MainTemplate>
+    <MainTemplate :large="true">
         <div class="landing-page">
-
+            
         </div>
     </MainTemplate>
 </template>

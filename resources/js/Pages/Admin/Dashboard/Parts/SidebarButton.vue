@@ -16,7 +16,7 @@
 
         <div class="dropdown-menu">
             
-            <Link v-for="menuLink in menuLinks" :class="[{active: $page.component == menuLink.component}, 'dropdown-link d-flex']" :href="menuLink.link">
+            <Link v-for="menuLink in menuLinks" :class="[{active: $page.component == menuLink.component}, 'dropdown-link d-flex']" :href="prefix+ menuLink.link">
                 <i :class="`fa-${ $page.component == menuLink.component ? 'solid' : 'regular'} fa-square`"></i>
                 <p class="btn-label"> {{ menuLink.label }}</p>
             </Link>
@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { Icon, MenuLinks } from '@/Utilities/Interfaces';
 
 interface SidebarMenu{
@@ -35,7 +35,8 @@ interface SidebarMenu{
     active?: boolean,
     dropdown?: boolean,
     link?: string,
-    menuLinks?: MenuLinks[]
+    menuLinks?: MenuLinks[],
+    prefix?: string,
 }
 
 const props = withDefaults( defineProps<SidebarMenu>(), {

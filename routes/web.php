@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use App\Http\Middleware\AdminRoute;
@@ -65,6 +66,14 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(ProductController::class)->prefix('product')->name('product.')->group(function () {
     
         Route::get('/', 'index')->name('index');
+        Route::get('/{product}', 'show')->name('show');
+    });
+
+    Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
+    
+        Route::get('/', 'index')->name('index');
+        Route::post('/add/{product}', 'add')->name('add');
+        Route::delete('/delete/{cart}', 'destroy')->name('destroy');
     });
 });
 
@@ -74,7 +83,6 @@ Route::middleware(['auth'])->group(function () {
  */
 Route::middleware(['auth', AdminRoute::class])->prefix('admin')->name('admin.')->group(function () {
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
-
 
         // admin.dashboard.<route name>
         Route::get('/containers', function () {

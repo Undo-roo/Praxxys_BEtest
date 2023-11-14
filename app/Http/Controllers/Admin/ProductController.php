@@ -64,15 +64,14 @@ class ProductController extends Controller
     }
 
     public function redirectOnCreateRefresh(){
-        return redirect()->route('product.create');
+        return redirect()->route('admin.product.create');
     }
 
     public function redirectOnRefresh($id){
-        return redirect()->route('product.edit', ['id' => $id]);
+        return redirect()->route('admin.product.edit', ['id' => $id]);
     }
 
     public function verifyDetails(Request $request){
-
         $request->validate([
             'name' => 'required|string',
             'category' => 'required',
@@ -91,7 +90,6 @@ class ProductController extends Controller
     }
 
     public function verifyDetailsEdit(Request $request){
-
         $request->validate([
             'name' => 'required|string',
             'category' => 'required',

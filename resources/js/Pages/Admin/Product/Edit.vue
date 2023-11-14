@@ -1,5 +1,5 @@
 <template>
-    <CreateEdit :product="product" location='Product/Edit' link="update">
+    <CreateEdit :product="product" location='Admin/Product/Edit' link="update">
     
     </CreateEdit>
 </template>
