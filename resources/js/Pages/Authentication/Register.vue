@@ -1,24 +1,49 @@
 <template>
     <MainTemplate>
-        <div class="login-box">
-            <form @submit.prevent="fields.post('/attempt')">
+        <div class="auth-box">
+            
+            <form @submit.prevent="fields.post('/register')">
+                
+                <!-- <div v-if="flash">
+                    {{ flash }}
+                </div> -->
+
+                <Link href="/login" style="text-decoration: none;">
+                    <Button 
+                        type="button" color="dark-gray" 
+                        style="padding: .25rem 1.5rem .25rem 1.5rem; font-size: 12px; margin-left: auto;"
+                        :icon="{name: 'chevron-left', size: '12px'}" label="Login" 
+                    />
+                </Link>
+
                 <h2>REGISTER</h2>
                 
-                <p>Username </p>
+                <p>Full name </p>
+                <input type="text" v-model="fields.name">
+                <h5>{{ fields.errors.name }} </h5>
 
+                <p>Username </p>
                 <input type="text" v-model="fields.username">
                 <h5>{{ fields.errors.username }} </h5>
 
+                <p>Email </p>
+                <input type="text" v-model="fields.email">
+                <h5>{{ fields.errors.email }} </h5>
+
                 <p>Password </p>
-                <input type="password" v-model="fields.password">
+                <EyeTextInput v-model="fields.password" />
+                <!-- <input type="password" v-model="fields.password"> -->
                 <h5>{{ fields.errors.password }} </h5>
+
+                <p>Confirm Password </p>
+                <EyeTextInput v-model="fields.password_confirmation" />
+                <!-- <input type="password" v-model="fields.confirm_password"> -->
+                <h5>{{ fields.errors.password_confirmation }} </h5>
 
 
                 <div class="d-flex">
-                    <input type="checkbox" v-model="fields.remember" true-value="1" false-value="0">
-                    <p style="margin: 0px; margin-left: .75rem;">Remember me</p>
 
-                    <Button :disabled="disabledSubmit" style="padding: .25rem 1.5rem .25rem 1.5rem; font-size: 15px; margin-left: auto;" label="Submit">
+                    <Button color="blue" :disabled="disabledSubmit" style="padding: .25rem 1.5rem .25rem 1.5rem; font-size: 15px; margin-left: auto;" label="Create">
 
                     </Button>
                 </div>
@@ -30,27 +55,37 @@
 <script setup lang="ts">
 import MainTemplate from '@/MainTemplate.vue';
 import { Link, useForm } from '@inertiajs/vue3';
-import { watch, reactive, ref, computed, onMounted } from 'vue';
+import { watch, reactive, computed } from 'vue';
 import Button from '@/Components/Button.vue';
+import EyeTextInput from '@/Components/EyeTextInput.vue';
+
 
 const fields = useForm({
     username: '',
+    email: '',
+    name: '',
+    password_confirmation: '',
     password: '',
-    remember: 0,
 });
 
 const errors = reactive({
     username: '',
     password: '',
+    email: '',
+    name: '',
+    password_confirmation: '',
 });
 
 const errorCheck = reactive({
     username: true,
     password: true,
+    email: true,
+    name: true,
+    password_confirmation: true,
 })
 
 const disabledSubmit = computed(() =>{
-    return errorCheck.username || errorCheck.password;
+    return errorCheck.username || errorCheck.password || errorCheck.password_confirmation || errorCheck.email || errorCheck.name ;
 })
 
 const required = (text: string, field: string) =>{
@@ -61,10 +96,18 @@ const required = (text: string, field: string) =>{
     return '';
 }
 
+const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
 watch(() => fields.username, () => {
     let msg = required(fields.username, 'Username');
     fields.errors.username = msg;
     errorCheck.username = msg != '';
+})
+
+watch(() => fields.name, () => {
+    let msg = required(fields.name, 'Name');
+    fields.errors.name = msg;
+    errorCheck.name = msg != '';
 })
 
 watch(() => fields.password, () => {
@@ -73,56 +116,30 @@ watch(() => fields.password, () => {
     errorCheck.password = msg != '';
 })
 
+watch(() => fields.email, () => {
+    // let msg = required(fields.email, 'Email');
+    let msg = '';
+    if(!pattern.test(fields.email)){
+        msg = 'Invalid Email Format';
+    }
+
+    fields.errors.email = msg;
+    errorCheck.email = msg != '';
+})
+
+watch(() => fields.password_confirmation, () => {
+    let msg = required(fields.password_confirmation, 'Confirm Password');
+
+    if(fields.password_confirmation != fields.password){
+        msg = 'password and password confirmation does not match'
+    }
+
+    fields.errors.password_confirmation = msg;
+    errorCheck.password_confirmation = msg != '';
+})
 
 </script>
 
-<style lang="scss" scoped>
-.login-box{
-    display: flex;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-
-    form{
-        margin-left: 2.5rem;
-        flex: 1;
-        max-width: 700px;
-        box-shadow: 0px 0px .5rem rgba($color: #000000, $alpha: .30);
-        border-radius: 5px;
-        padding: 1.5rem;
-        margin-right: auto;
-        margin-left: auto;
-    }
-    
-    input[type=text], input[type=password]{
-        background-color: transparent;
-        border-radius: 3px;
-        border: 0px;
-        box-shadow: 0px 0px .25rem rgba($color: #000000, $alpha: .35);
-        // border-bottom: 2px solid #FF92A7;
-        padding: .5rem 1.25rem .5rem  1.25rem ;
-        font-size: 17px;
-        outline: none;
-        width: 100%;
-        color: #373737;
-        
-        &:hover, &:focus{
-            border: 0px;
-            box-shadow: inset 0px 0px .25rem rgba($color: #000000, $alpha: .30);
-        }
-    }
-
-
-    h2{
-        color: #09365f;
-        margin-bottom: 4rem;
-    }
-    h5{
-        margin-bottom: 3rem;
-        color: #9A0000;
-    }
-    p{
-        margin-bottom: .5rem;
-    }
-}
+<style lang="scss">
+@import '../../../css/auth.scss';
 </style>

@@ -41,6 +41,8 @@ Route::controller(AuthController::class)->group(function () {
 Route::controller(AuthController::class)->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('/login', 'index')->name('login');
+        Route::get('/register', 'register')->name('register');
+        Route::post('/register', 'create')->name('customer.create');
         Route::post('/attempt', 'login');
     });
 

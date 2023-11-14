@@ -1,0 +1,23 @@
+@import './variable.scss';
+@import './mixins.scss';
+
+.d-flex{
+    display: flex;
+    align-items: center;
+}
+
+.loading-box{
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+
+.left-enter-active{
+    transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.left-enter-from,
+.left-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
+}

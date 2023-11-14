@@ -25,7 +25,6 @@ const props = withDefaults( defineProps<MainHeader>(), {
     large: false,
 })
 
-console.log(props.navigations)
 </script>
 
 <style scoped lang="scss">
