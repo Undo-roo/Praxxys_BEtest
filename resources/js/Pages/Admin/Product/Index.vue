@@ -27,7 +27,7 @@
                 >
                     <template #action="{ item } : any ">
                         <button @click="deleteData(item.name, item.id)" class="trash-btn"><i class="fa-solid fa-trash"></i></button>
-                        <Link class="edit-btn" :href="`/product/edit/${item.id}`"><i class="fa-solid fa-pen-to-square"></i></Link>
+                        <Link class="edit-btn" :href="`/admin/product/edit/${item.id}`"><i class="fa-solid fa-pen-to-square"></i></Link>
                     </template>
                 </CustomDataTable>
 
@@ -88,26 +88,21 @@ const requestData = reactive({
 const filterData = async () =>{
     isLoading.value = true
 
-    try{
-        const { data, status } = await axios.post<Response>('/api/product/data', requestData)
+    const { data, status } = await axios.post<Response>('/api/product/data', requestData)
 
-        // products.value = data.data.map((item: Product) => {
-        //     item.dateTime = convertDateTime(item.dateTime)
-        //     return item
-        // })
+    // products.value = data.data.map((item: Product) => {
+    //     item.dateTime = convertDateTime(item.dateTime)
+    //     return item
+    // })
 
-        products.value = data.data as Items[]
+    products.value = data.data as Items[]
 
-        links.value = data.links
+    links.value = data.links
 
-        links.value[0].label = 'Prev';
-        links.value[links.value.length-1].label = 'Next';
+    links.value[0].label = 'Prev';
+    links.value[links.value.length-1].label = 'Next';
 
-        serverItemsLength.value = data.total
-    }
-    catch (error: unknown) {
-        console.log(error)
-    }
+    serverItemsLength.value = data.total
 
     isLoading.value = false
 }
@@ -131,21 +126,16 @@ const deleteData = async (name: string, id: number) =>{
 
 onBeforeMount(async () =>{
 
-    try{
-        const { data, status } = await axios.post<Response>('/api/product/data', requestData)
+    const { data, status } = await axios.post<Response>('/api/product/data', requestData)
 
-        products.value = data.data
+    products.value = data.data
 
-        links.value = data.links
+    links.value = data.links
 
-        links.value[0].label = 'Prev';
-        links.value[links.value.length-1].label = 'Next';
+    links.value[0].label = 'Prev';
+    links.value[links.value.length-1].label = 'Next';
 
-        serverItemsLength.value = data.total
-    }
-    catch (error: unknown) {
-        console.log(error)
-    }
+    serverItemsLength.value = data.total
 })
 </script>
 

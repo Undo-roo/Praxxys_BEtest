@@ -106,16 +106,7 @@ Route::middleware(['auth', AdminRoute::class])->prefix('admin')->name('admin.')-
         Route::post('/update', 'update')->name('update');
 
         Route::post('/verify/details', 'verifyDetails');
-        Route::post('/{id}/verify/details', 'verifyDetails');
-
-        Route::get('/verify/details', 'redirectOnCreateRefresh');
-        Route::get('/{id}/verify/details', 'redirectOnRefresh');
-
-        Route::post('/verify/images', 'verifyImagesEdit');
-        Route::post('/{id}/verify/images', 'verifyDetailsEdit');
-
-        Route::get('/verify/images', 'redirectOnCreateRefresh');
-        Route::get('/{id}/verify/images', 'redirectOnRefresh');
+        Route::post('/verify/images', 'verifyImages');
         
         Route::get('/data', 'data')->name('data');
     });

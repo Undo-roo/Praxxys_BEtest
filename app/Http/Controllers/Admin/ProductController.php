@@ -63,22 +63,15 @@ class ProductController extends Controller
         return response(200);
     }
 
-    public function redirectOnCreateRefresh(){
-        return redirect()->route('admin.product.create');
-    }
-
-    public function redirectOnRefresh($id){
-        return redirect()->route('admin.product.edit', ['id' => $id]);
-    }
-
     public function verifyDetails(Request $request){
         $request->validate([
             'name' => 'required|string',
             'category' => 'required',
             'description' => 'required|string', //|max:2000
+            'price' => 'required|numeric|min:1', //|max:2000
         ]);
 
-        return inertia($request->location);
+        return back();
     }
 
     public function verifyImages(Request $request){
@@ -86,25 +79,7 @@ class ProductController extends Controller
             'images.*' => 'required|mimes:png,jpeg,jpg',
         ]);
 
-        return inertia($request->location);
-    }
-
-    public function verifyDetailsEdit(Request $request){
-        $request->validate([
-            'name' => 'required|string',
-            'category' => 'required',
-            'description' => 'required|string', //|max:2000
-        ]);
-
-        return inertia($request->location);
-    }
-
-    public function verifyImagesEdit(Request $request){
-        $request->validate([
-            'images.*' => 'required|mimes:png,jpeg,jpg',
-        ]);
-
-        return inertia($request->location);
+        return back();
     }
 
 
@@ -113,24 +88,24 @@ class ProductController extends Controller
             'dateTime' => 'required|date',
         ]);
 
-        Product::create([
-            'name' => $request->name,
-            'category_id' => $request->category,
-            'description' => $request->description,
-            'dateTime' => $request->dateTime,
-        ]);
+        $data = $request->all();
+        // $images = $data['images'];
+
+        unset($data['images'], $data['id'], $data['location']);
+
+        Product::create($data);
         
-        return redirect()->route('product.index');
+        return redirect()->route('admin.product.index');
     }
 
     public function update(Request $request){
-
         $request->validate([
             'dateTime' => 'required|date',
             'images.*' => 'required|mimes:png,jpeg,jpg',
             'name' => 'required|string',
-            'category' => 'required',
+            'category_id' => 'required',
             'description' => 'required|string',
+            'price' => 'required|numeric|min:1', //|max:2000
         ]);
 
         $product = Product::find($request->id);
@@ -142,6 +117,6 @@ class ProductController extends Controller
 
         $product->save();
         
-        return redirect()->route('product.index');
+        return redirect()->route('admin.product.index');
     }
 }

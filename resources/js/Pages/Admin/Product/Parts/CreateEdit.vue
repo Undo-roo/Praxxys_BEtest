@@ -8,14 +8,18 @@
                     <input :class="{error: fields.errors.name}" type="text" placeholder="Product Name" v-model="fields.name">
                     <span class="error-text">{{ fields.errors.name }}</span>
 
+                    <h3> Product Price </h3>
+                    <input :class="{error: fields.errors.price}" type="text" placeholder="Product Price" v-model="fields.price">
+                    <span class="error-text">{{ fields.errors.price }}</span>
+
                     <h3> Category </h3>
 
-                    <select :class="{error: fields.errors.category}" v-model="fields.category">
+                    <select :class="{error: fields.errors.category_id}" v-model="fields.category_id">
                         <option disabled default value=""> Select a Category </option>
                         <option v-for="option in options" :value="option.id">{{ option.title }}</option>
                     </select>
 
-                    <span class="error-text">{{ fields.errors.category }}</span>
+                    <span class="error-text">{{ fields.errors.category_id }}</span>
 
                     <h3> Description </h3>
                     <editor
@@ -66,7 +70,7 @@ import Template from '@/Admin/Dashboard/Template.vue';
 import Card from '@/Components/Widgets/Card.vue';
 import Editor from '@tinymce/tinymce-vue'
 import ButtonIcon from '@/Components/Button.vue';
-import { InertiaForm, Link, useForm, usePage } from '@inertiajs/vue3';
+import { InertiaForm, useForm, usePage, router } from '@inertiajs/vue3';
 import { reactive, watch, computed, Ref, ref } from 'vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import moment from 'moment';
@@ -84,8 +88,8 @@ const props = defineProps({
     },
 })
 
-const verifyDetailsLink = props.product ? '/admin/product/'+props.product.id+'/verify/details' : '/admin/product/verify/details'
-const verifyImageLink = props.product ? '/admin/product/'+props.product.id+'/verify/images' : '/admin/product/verify/images'
+const verifyDetailsLink = '/admin/product/verify/details';
+const verifyImageLink = '/admin/product/verify/images';
 
 const previews: Ref<string[]> = ref([]);
 const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
@@ -97,27 +101,31 @@ interface CategorySelect {
 
 const fields: InertiaForm<{
     name: string,
-    category: string,
+    category_id: string,
     description: string,
     dateTime?: string,
     images: File[],
     location: string,
+    price: number,
     id?: number
 }> = useForm({
     name: props.product ? props.product.name : '',
-    category: props.product ? props.product.category_id : '',
+    category_id: props.product ? props.product.category_id : '',
     description: props.product ? props.product.description : '',
     dateTime: props.product ? props.product.dateTime : null,
     images: [],
     location: props.location,
+    price: props.product ? props.product.price : 0,
     id: props.product ? props.product.id : null,
 });
+
 const detailsCheck = reactive({
     name: !props.product,
     category: !props.product,
     description: !props.product,
     dateTime: !props.product,
     images: !props.product,
+    price: !props.product,
 })
 
 const doneFeilds = reactive({
@@ -126,34 +134,47 @@ const doneFeilds = reactive({
     dateTime: !!props.product,
 })
 
-
 const showFeilds = reactive({
     image: !!props.product,
     dateTime: !!props.product,
-    // image: true,
-    // dateTime: true,
 })
 
 const verifyDetails = () => {
 
-    fields.post(verifyDetailsLink, {
-        preserveScroll: true,
+    router.post(verifyDetailsLink, {
+        name: fields.name,
+        category: fields.category_id,
+        description: fields.description,
+        price: fields.price
+    }, 
+    { 
+        preserveScroll: true, 
+        
         onSuccess: () => {
             doneFeilds.details = true;
             showFeilds.image = true
+        },
+        onError: (errors) => {
+            Object.assign(fields.errors, errors)
         },
     })
 }
 
 const verifyImage = () => {
-    fields.post(verifyImageLink, {
-        preserveScroll: true,
+    router.post(verifyImageLink, {
+        images: fields.images,
+    }, 
+    { 
+        preserveScroll: true, 
+        
         onSuccess: () => {
             doneFeilds.image = true;
             showFeilds.dateTime = true
         },
+        onError: (errors) => {
+            Object.assign(fields.errors, errors)
+        },
     })
-    showFeilds.dateTime = true
 }
 
 const previewImage = (file: File) =>{
@@ -161,7 +182,6 @@ const previewImage = (file: File) =>{
         let reader = new FileReader
 
         reader.onload = e =>{
-            // previews[this.field].preview = e.target.
             if(e.target){
                 previews.value.push(e.target.result as string)
             }
@@ -197,7 +217,7 @@ const deleteFile = (ind: number) =>{
 }
 
 const disabledSubmitDetails = computed(() =>{
-    return detailsCheck.name || detailsCheck.category || detailsCheck.description;
+    return detailsCheck.name || detailsCheck.category || detailsCheck.description || detailsCheck.price;
 })
 
 const required = (text: string = "", field: string) =>{
@@ -218,9 +238,19 @@ watch(() => fields.name, () => {
     doneFeilds.details = false;
 })
 
-watch(() => fields.category, () => {
-    let msg = required(fields.category, 'Category');
-    fields.errors.category = msg;
+watch(() => fields.price, () => {
+    let msg = required(fields.price+'', 'Product Price');
+    fields.errors.price = msg;
+
+    let result = msg != '';
+    detailsCheck.price = result;
+
+    doneFeilds.details = false;
+})
+
+watch(() => fields.category_id, () => {
+    let msg = required(fields.category_id, 'Category');
+    fields.errors.category_id = msg;
     
     let result = msg != '';
     detailsCheck.category = msg != '';
@@ -272,7 +302,6 @@ const init = {
     plugins: 'lists link image emoticons',
     toolbar: 'styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link image emoticons'
 }
-
 </script>
 
 <style lang="scss" scoped>
