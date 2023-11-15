@@ -8,7 +8,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -51,7 +50,14 @@ class User extends Authenticatable
         return $this->hasMany(Cart::class);
     }
 
-    public function activeCart(): Cart{
-        return $this->carts()->where('checkout', null)->first();
+    /**
+     * @params withItems: boolean
+     * 
+     * Get Current Active Cart with the items (Optional)
+     */
+    public function activeCart($with = null): Cart{
+        $query = $this->carts()->where('checkout', null);
+
+        return $with ? $query->with($with)->first() : $query->first();
     }
 }

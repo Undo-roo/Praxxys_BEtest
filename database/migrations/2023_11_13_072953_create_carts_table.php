@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->onUpdate('cascade')->nullOnDelete();
             $table->timestamp('checkout')->nullable();
-            $table->integer('quantity')->default(0);
-            $table->float('total')->default(0);
+            // $table->integer('quantity')->default(0);
+            // $table->float('total')->default(0);
             $table->timestamps();
         });
     }

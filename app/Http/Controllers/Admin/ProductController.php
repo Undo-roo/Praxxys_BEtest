@@ -52,7 +52,7 @@ class ProductController extends Controller
             $products = $products->where('category_id', $request->filterBy);
         }
 
-        $products = $products->with('category') ->orderBy('created_at', 'DESC')->paginate(20);
+        $products = $products->with('category')->orderBy('created_at', 'DESC')->paginate(20);
         
         return response()->json($products);
     }

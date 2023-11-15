@@ -73,7 +73,8 @@ Route::middleware(['auth'])->group(function () {
     
         Route::get('/', 'index')->name('index');
         Route::post('/add/{product}', 'add')->name('add');
-        Route::delete('/delete/{cart}', 'destroy')->name('destroy');
+        Route::delete('/delete/{item}', 'destroy')->name('destroy');
+        Route::patch('/edit/{item}', 'edit')->name('edit');
     });
 });
 

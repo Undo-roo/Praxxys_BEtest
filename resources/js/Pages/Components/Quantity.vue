@@ -1,8 +1,8 @@
 <template>
     <div class="quantity-box">
-        <button @click="add(1)" class="left"><i class="fa-solid fa-chevron-up"></i></button>
-        <input class="input" type="text" v-model="value">
-        <button @click="add(-1)" class="right"><i class="fa-solid fa-chevron-down"></i></button>
+        <button @click="add(-1)" class="left"><i class="fa-solid fa-minus"></i></button>
+        <input class="input" type="text" :value="value" @change="changeQty">
+        <button @click="add(1)" class="right"><i class="fa-solid fa-plus"></i></button>
     </div>
 </template>
 
@@ -10,14 +10,20 @@
 import { ref, computed, WritableComputedRef } from 'vue'
 
 const props = defineProps(['modelValue'])
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'changeVal'])
+
+let pattern =/[A-Z|a-z]+/g;
+
 
 const value:WritableComputedRef<number> = computed({
   get() {
-    return parseInt(props.modelValue)
+    let qty = parseInt(props.modelValue);
+
+    emit('changeVal');
+    return qty;
   },
   set(value) {
-    emit('update:modelValue', value)
+    emit('update:modelValue', parseInt(value+""));
   }
 })
 
@@ -28,39 +34,64 @@ function add(one: number){
         value.value = newVal;
     }
 }
+function changeQty(event: Event){
+    const target = event.target as HTMLInputElement;
+     
+    let qty = parseInt(target.value);
+    
+    if( isNaN(qty) || pattern.test(target.value)){
+        value.value = 1;
+    }
+    else if(qty < 1){
+        value.value = 1;
+    }
+    else{
+        value.value = qty;
+    }
+}
 </script>
 
 <style lang="scss" scoped>
+$borderColor: #888888;
 .quantity-box{
     display: flex;
     
     button, .input{
-        padding: .25rem .5rem .25rem .5rem;
+        padding: .35rem .5rem .35rem .5rem;
     }
 
     button{
         background-color: white;
         outline: none;
-        border: 1px solid;
+        border: 1px solid $borderColor;
         cursor: pointer;
+        transition: .25s;
+        color: rgb(75, 75, 75);
+
+        &:hover{
+            color: black;
+        }
+
+        i{
+            font-size: 10px;
+        }
     }
 
     .right{
-        border-radius: 0px 3px 3px 0px;
         border-left: none;
     }
     .left{
-        border-radius: 3px 0px 0px 3px;
         border-right: none;
     }
 
     .input{
         text-align: center;
-        max-width: 60px;
-        border: 1px solid;
+        max-width: 50px;
         font-size: 12px;
-        // border-left: 0px;
-        // border-right: 0px;
+        outline: none;
+        border: 1px solid $borderColor;
+        border-left: 0px;
+        border-right: 0px;
     }
 }
 </style>

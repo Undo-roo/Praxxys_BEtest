@@ -17,8 +17,8 @@ class CartFactory extends Factory
     public function definition(): array
     {
         return [
-            'total' => 0,
-            'quantity' => 0,
+            // 'total' => 0,
+            // 'quantity' => 0,
         ];
     }
 }

@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
 
         User::factory()
-        ->has(Cart::factory())
+        // ->has(Cart::factory())
         ->create([
             'name' => 'Andrew Dacumos',
             'username' => 'admin',

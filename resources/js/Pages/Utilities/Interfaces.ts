@@ -69,11 +69,22 @@ interface Cart{
     created_at: string,
     updated_at: string,
     id: number,
-    product_id: number,
     user_id: number,
-    quantity: number,
+    checkout: string,
+    // quantity: number,
+    // total: number,
+}
+
+interface CartItem{   
+    id: number,
+    product_id: number,
+    cart_id: number,
     total: number,
+    quantity: number,
+
+    created_at: string,
+    updated_at: string,
 }
 
 
-export type { Icon, Avatar, Logo, MenuLinks, Navigations, User, Product, Cart };
+export type { Icon, Avatar, Logo, MenuLinks, Navigations, User, Product, Cart, CartItem };
