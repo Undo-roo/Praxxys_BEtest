@@ -56,15 +56,14 @@ interface Product{
 
 }
 
-interface Category{
-    id: number;
-    title: string;
-    description: string;
-    folder: string;
-    updated_at: string;
-    created_at: string;
-}
-
+// interface Category{
+//     id: number;
+//     title: string;
+//     description: string;
+//     folder: string;
+//     updated_at: string;
+//     created_at: string;
+// }
 
 interface Cart{
     created_at: string,

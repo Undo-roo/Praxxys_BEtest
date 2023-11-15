@@ -1,6 +1,8 @@
 <template>
     <MainTemplate>
         <div class="cart-box">
+
+            <!-- Create a vue model for this -->
             <table>
                 <thead>
                     <tr>

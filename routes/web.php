@@ -119,3 +119,9 @@ Route::middleware(['auth', AdminRoute::class])->prefix('admin')->name('admin.')-
         Route::get('/data', 'data')->name('data');
     });
 });
+
+
+Route::get('/test', function(){
+    // dd(request()->user());
+    return Inertia::render('Test');
+});

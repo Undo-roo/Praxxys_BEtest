@@ -13,7 +13,7 @@ class CartController extends Controller
      * User Cart List
     */
     public function index(){
-        $cart = Cart::where('user_id', auth()->user()->id)->with('product.category:id,title')->get();
+        $cart = Cart::where('user_id', auth()->user()->id)->where('checkout', null)->with('product.category:id,title')->get();
 
         return Inertia::render('Customer/Cart/Index', compact('cart'));
     }

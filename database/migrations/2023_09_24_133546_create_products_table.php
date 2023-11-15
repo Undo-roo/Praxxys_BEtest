@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description'); 
-            $table->integer('price');
+            $table->float('price');
             $table->dateTime('dateTime'); 
             $table->foreignId('category_id')->nullable()->constrained('categories')->onUpdate('cascade')->nullOnDelete('cascade');
             $table->timestamps();
