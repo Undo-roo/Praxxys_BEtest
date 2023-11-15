@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { Form } from './LMAO/Form';
+import { Form } from './Function/Form';
 const form = Form(1);
 
 form.hello()

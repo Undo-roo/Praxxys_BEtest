@@ -72,9 +72,15 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
     
         Route::get('/', 'index')->name('index');
+        Route::get('/checkout', 'checkout')->name('checkout');
         Route::post('/add/{product}', 'add')->name('add');
         Route::delete('/delete/{item}', 'destroy')->name('destroy');
         Route::patch('/edit/{item}', 'edit')->name('edit');
+        Route::get('/success', 'success')->name('success');
+        Route::get('/cancel', 'cancel')->name('cancel');
+
+        Route::get('/paypal', 'paypalPayment')->name('paypal');
+        Route::get('/image', 'imagePayment')->name('image');
     });
 });
 

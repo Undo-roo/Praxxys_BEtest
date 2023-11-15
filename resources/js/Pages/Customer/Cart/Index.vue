@@ -51,14 +51,16 @@
                 <p> Total count of items: {{ quantity }} </p>
                 <p>Overall Total: {{ total }} </p>
 
-                <ButtonIcon color="green" style="padding-top: .25rem; padding-bottom: .25rem; float: right" label="Checkout" />
+                <Link href="/cart/checkout"> 
+                    <ButtonIcon :disabled="cart.items.length < 1" color="green" style="padding-top: .25rem; padding-bottom: .25rem; float: right" label="Checkout" />
+                </Link>
             </div>
         </div>
     </MainTemplate>
 </template>
 
 <script setup lang="ts">
-import { usePage, router } from '@inertiajs/vue3';
+import { usePage, router, Link } from '@inertiajs/vue3';
 import MainTemplate from '@/MainTemplate.vue';
 import { Cart, CartItem } from '@/Utilities/Interfaces';
 import ButtonIcon from '@/Components/Button.vue'
