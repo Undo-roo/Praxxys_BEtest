@@ -38,7 +38,7 @@ trait Authentication{
     }
 
     protected function getUserIntendedDashboard(){
-        $intended = request()->user()->isAdmin ? 'admin.dashboard.containers' : 'dashboard.containers';
+        $intended = request()->user()->isAdmin ? 'admin.dashboard.containers' : 'dashboard.profile';
 
         return route($intended); 
     }

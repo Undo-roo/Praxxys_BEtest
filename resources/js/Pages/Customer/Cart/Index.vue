@@ -37,11 +37,6 @@
                         <p v-if="cart.items.length <= 0"> No item in the cart </p>
                     </tbody>
                 </table>
-
-                <ButtonIcon 
-                    color="dark-gray" label="Edit" :disabled="true"
-                    style="margin-top: 1.5rem; padding: .3rem 1rem .3rem 1rem; border-radius: 2px; margin-right: 1.5rem; float: right"
-                />
             </div>
 
             <div class="receipt">

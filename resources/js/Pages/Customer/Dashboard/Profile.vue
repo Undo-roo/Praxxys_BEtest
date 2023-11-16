@@ -1,5 +1,8 @@
 <template>
     <MainTemplate>
+
+        <!-- Create alert box -->
+        <p class="message" v-if="$page.props.message">{{ $page.props.message }}</p>
         PROFILE
 
           <Link
@@ -19,5 +22,9 @@ import MainTemplate from '@/MainTemplate.vue';
 </script>
 
 <style scoped>
-
+.message{
+  font-weight: bold;
+  color: green;
+  margin-bottom: 1rem;
+}
 </style>

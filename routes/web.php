@@ -8,6 +8,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use App\Http\Middleware\AdminRoute;
+use App\Http\Middleware\CheckoutGuard;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -59,7 +61,7 @@ Route::middleware(['auth'])->group(function () {
         //dashboard.<route name>
         Route::get('/', function () {
             return Inertia::render('Customer/Dashboard/Profile');
-        })->name('containers');
+        })->name('profile');
     });
 
     // ->middleware('auth')
@@ -72,15 +74,15 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(CartController::class)->prefix('cart')->name('cart.')->group(function () {
     
         Route::get('/', 'index')->name('index');
-        Route::get('/checkout', 'checkout')->name('checkout');
+        Route::get('/checkout', 'checkout')->middleware(CheckoutGuard::class)->name('checkout');
         Route::post('/add/{product}', 'add')->name('add');
         Route::delete('/delete/{item}', 'destroy')->name('destroy');
         Route::patch('/edit/{item}', 'edit')->name('edit');
-        Route::get('/success', 'success')->name('success');
-        Route::get('/cancel', 'cancel')->name('cancel');
+        Route::get('/success', 'success')->middleware(CheckoutGuard::class)->name('success');
+        Route::get('/cancel', 'cancel')->middleware(CheckoutGuard::class)->name('cancel');
 
-        Route::get('/paypal', 'paypalPayment')->name('paypal');
-        Route::get('/image', 'imagePayment')->name('image');
+        Route::post('/payment', 'payment')->middleware(CheckoutGuard::class)->name('payment');
+        Route::get('/payment', 'payment')->middleware(CheckoutGuard::class)->name('payment');
     });
 });
 

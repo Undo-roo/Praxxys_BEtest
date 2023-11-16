@@ -60,4 +60,15 @@ class User extends Authenticatable
 
         return $with ? $query->with($with)->first() : $query->first();
     }
+
+    public function newCart(){
+        $cart = $this->activeCart();
+
+        $cart->checkout = now();
+        $cart->save();
+
+        Cart::create([
+            'user_id' => $this->id,
+        ]);
+    }
 }
