@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'username',
     ];
 
     /**
@@ -42,4 +44,31 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    public function carts(): HasMany{
+        return $this->hasMany(Cart::class);
+    }
+
+    /**
+     * @params withItems: boolean
+     * 
+     * Get Current Active Cart with the items (Optional)
+     */
+    public function activeCart($with = null): Cart{
+        $query = $this->carts()->where('checkout', null);
+
+        return $with ? $query->with($with)->first() : $query->first();
+    }
+
+    public function newCart(){
+        $cart = $this->activeCart();
+
+        $cart->checkout = now();
+        $cart->save();
+
+        Cart::create([
+            'user_id' => $this->id,
+        ]);
+    }
 }

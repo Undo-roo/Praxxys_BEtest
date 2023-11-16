@@ -1,10 +1,10 @@
 <template>
     
     <div :class="[{close: close}, 'closable']" >
-        <div class="card-box" :style="`max-width: ${cardMaxWidth ? cardMaxWidth : '100%'}`">
+        <div class="card-box" :style="`max-width: ${props.label ? props.maxWidth : '100%'}`">
             <div>
                 <div class="card-header">
-                    <p class="card-label" v-if="cardLabel">{{ cardLabel }}</p>
+                    <p class="card-label" v-if="props.label">{{ props.label }}</p>
                     <slot name="header"></slot>
                     <div class="header-btn">
                         <button @click="minimize = !minimize" v-if="minimizable"><i :class="`fa-solid fa-${minimize ? 'plus' : 'minus'}`"></i></button>
@@ -26,17 +26,24 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
-const props = defineProps({
-    cardLabel: String,
-    cardMaxWidth: String,
+interface Card {
+    label ?: string,
+    maxWidth ?: string,
 
-    closable: Boolean,
-    minimizable: Boolean,
-    fullscreenable: Boolean,
-    refreshable: Boolean,
+    closable?: boolean,
+    minimizable?: boolean,
+    fullscreenable?: boolean,
+    refreshable?: boolean,
+}
+
+const props = withDefaults( defineProps<Card>(), {
+    closable: false,
+    minimizable: false,
+    fullscreenable: false,
+    refreshable: false,
 })
 
 let close = ref(false);

@@ -4,35 +4,32 @@
         <slot name="image"></slot>
         <slot name="icon"></slot>
 
-        <i :class="`fa-${font.type} fa-${font.icon}`"></i>
+        <i :class="`fa-${props.icon.type ?? 'solid'} fa-${props.icon.name}`"></i>
         <img :src="img" alt="" v-if="img">
 
         <span class="label">{{ label }}</span>
     </div>
 </template>
 
-<script setup>
-defineProps({
-    label: String,
-    img: String,
-    font: {
-        type: Object,
-        default(rawProps){
-            return {
-                type: 'solid',
-                icon: '',
-                fontSize: '',
-            }
-        }
-    },
-    remove: {
-        type: Boolean,
-        default: false,
-    }
+<script setup lang="ts">
+import { Icon } from '@/Utilities/Interfaces'
+
+interface RemovableLabel{
+    label?: string,
+    img?: string,
+    icon: Icon
+    remove?: boolean,
+}
+
+const props = withDefaults( defineProps<RemovableLabel>(), {
+    label: '',
+    img: '',
+    remove: false,
 })
 </script>
 
-<style lang="scss" scoped>
+    lable: stron
+    <style lang="scss" scoped>
 .removable-label{
     
 }

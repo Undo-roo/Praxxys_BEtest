@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 
+
+
 export default defineConfig({
     plugins: [
         laravel({
@@ -15,7 +17,7 @@ export default defineConfig({
         preprocessorOptions: {
           scss: {
             additionalData: `
-                  @import "resources/css/variable.scss";
+                  @import "resources/css/global.scss";
                 `,
           },
         },

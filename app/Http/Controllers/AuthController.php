@@ -2,49 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\AuthCreateRequest;
+use App\Http\Requests\AuthLoginRequest;
+use App\Http\Traits\Authentication;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function index(){
+    use Authentication;
+    
+    public function index(){        
         return Inertia::render('Authentication/Login');
     }
 
-    public function login(Request $request){
+    public function login(AuthLoginRequest $request){
 
-        $request->validate([
-            'password' => 'required|string',
-            'username' => 'required|string',
-        ]);
+        $data = $request->validated();
 
-        $data = $request->all();
-
-        if(Auth::attempt(['username' => $data['username'], 'password' => $data['password']], $data['remember'])){
-            $request->session()->regenerate();
-
-            return redirect()->intended(route('dashboard.containers'));
-        }
-        else if(Auth::attempt(['email' => $data['username'], 'password' => $data['password']], $data['remember'])){
-            $request->session()->regenerate();
-
-            return redirect()->intended(route('dashboard.containers'));
-        }
-
-        return back()->withErrors([
-            'username' => 'Credentials does not match in our records',
-        ]);
+        return $this->authenticate($data);
     }
-    
-    public function logout(Request $request)
-    {
-        Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
+    public function register(){        
+        return Inertia::render('Authentication/Register');
+    }
 
-        $request->session()->regenerateToken();
+    public function create(AuthCreateRequest $request){
+        
+        $data = $request->validated();
 
-        return redirect('/');
+        $data['password'] = Hash::make($data['password']);
+
+        User::create($data);
+
+        return Inertia::render('Authentication/Login', [ 'message' => "Success registration!"]);
+
     }
 }

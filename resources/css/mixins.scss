@@ -1,0 +1,37 @@
+// global mix
+@mixin rectangularBox(){
+    padding: 0rem 1.5rem 0rem 1.5rem;
+    border-radius: 3px;
+}
+
+@mixin sidebarBox($maxHeight){
+  display: flex;
+  align-items: center;
+  border-bottom: .2px solid $border-color;
+  min-width: 250px;
+  max-height: $maxHeight;
+  overflow: hidden;
+}
+
+@mixin sidebarText(){
+    opacity: 1;
+    transition: .25s;
+}
+
+@mixin boxShadowSmall(){
+    box-shadow: 0rem 0rem .35rem rgba($color: #000000, $alpha: .250);
+}
+
+@mixin boxShadowExtraSmall(){
+    box-shadow: 0rem 0rem .15rem rgba($color: #000000, $alpha: .350);
+}
+
+@mixin maxSquareBox($dimension){
+    max-height: $dimension;
+    max-width: $dimension;
+}
+
+@mixin squareBox($dimension){
+    height: $dimension;
+    width: $dimension;
+}

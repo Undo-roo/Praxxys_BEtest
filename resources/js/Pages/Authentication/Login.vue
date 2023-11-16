@@ -1,35 +1,49 @@
 <template>
-    <Template>
-        <form @submit.prevent="fields.post('/attempt')" class="login-box">
-            <h2>LOGIN</h2>
-            
-            <p>Username </p>
+    <MainTemplate>
+        <div class="auth-box">
+            <form @submit.prevent="fields.post('/attempt')">
 
-            <h5>{{ fields.errors.username }} </h5>
-            <input type="text" v-model="fields.username">
+                <div v-if="message" style="color: green; font-weight: bold; margin-bottom: .5rem;">
+                    {{ message }}
+                </div>
 
-            <p>Password </p>
-            <h5>{{ fields.errors.password }} </h5>
-            <input type="password" v-model="fields.password">
+                <Link href="/register" style="text-decoration: none;">
+                    <Button 
+                        type="button" color="dark-gray" 
+                        style="padding: .25rem 1.5rem .25rem 1.5rem; font-size: 12px; margin-left: auto;"
+                        :icon="{name: 'chevron-right', size: '12px'}" label="Register" 
+                    />
+                </Link>
+                <h2>LOGIN</h2>
+                
+                <p>Username </p>
+
+                <input type="text" v-model="fields.username">
+                <h5>{{ fields.errors.username }} </h5>
+
+                <p>Password </p>
+                <input type="password" v-model="fields.password">
+                <h5>{{ fields.errors.password }} </h5>
 
 
-            <div class="d-flex">
-                <input type="checkbox" v-model="fields.remember" true-value="1" false-value="0">
-                <p style="margin: 0px; margin-left: .75rem;">Remember me</p>
+                <div class="d-flex">
+                    <input type="checkbox" v-model="fields.remember" true-value="1" false-value="0">
+                    <p style="margin: 0px; margin-left: .75rem;">Remember me</p>
 
-                <Button :disabled="disabledSubmit" style="padding: .25rem 1.5rem .25rem 1.5rem; font-size: 15px; margin-left: auto;" label="Submit">
-
-                </Button>
-            </div>
-        </form>
-    </Template>
+                    <Button :disabled="disabledSubmit" style="padding: .25rem 1.5rem .25rem 1.5rem; font-size: 15px; margin-left: auto;" label="Submit" />
+                </div>
+            </form>
+        </div>
+    </MainTemplate>
 </template>
 
-<script setup>
-import Template from './Template.vue';
-import { Link, useForm } from '@inertiajs/vue3';
-import { watch, reactive, ref, computed } from 'vue';
+<script setup lang="ts">
+import MainTemplate from '@/MainTemplate.vue';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { watch, reactive, ref, computed, onMounted } from 'vue';
 import Button from '@/Components/Button.vue';
+
+const message = usePage().props.message
 
 const fields = useForm({
     username: '',
@@ -50,9 +64,8 @@ const errorCheck = reactive({
 const disabledSubmit = computed(() =>{
     return errorCheck.username || errorCheck.password;
 })
-// const disabledSubmit = ref(false)
 
-const required = (text, field) =>{
+const required = (text: string, field: string) =>{
     if(text == ''){
         return 'The '+ field+' field is required';
     }
@@ -71,41 +84,10 @@ watch(() => fields.password, () => {
     fields.errors.password = msg;
     errorCheck.password = msg != '';
 })
+
+
 </script>
 
 <style lang="scss" scoped>
-.login-box{
-    margin-top: auto;
-    margin-bottom: auto;
-    max-width: 400px;
-    width: 100%;
-    
-    input[type=text], input[type=password]{
-        background-color: transparent;
-        border: 0px;
-        border-bottom: 2px solid #FF92A7;
-        padding: .25rem 1.25rem .25rem  1.25rem ;
-        font-size: 20px;
-        outline: none;
-        width: 100%;
-        margin-bottom: 3rem;
-        
-        &:hover, &:focus{
-            border-bottom: 2px solid #D01B24;
-        }
-    }
-
-    padding: 1rem;
-
-    h2{
-        color: #9A0000;
-        margin-bottom: 4rem;
-    }
-    h5{
-        color: #9A0000;
-    }
-    p{
-        margin-bottom: .5rem;
-    }
-}
+@import '../../../css/auth.scss';
 </style>
