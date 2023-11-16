@@ -105,6 +105,7 @@ Route::middleware(['auth', AdminRoute::class])->prefix('admin')->name('admin.')-
     });
 
     // ->middleware('auth')
+    // admin/product/{name}
     Route::controller(AdminProductController::class)->prefix('product')->name('product.')->group(function () {
     
         Route::get('/', 'index')->name('index');
@@ -117,6 +118,7 @@ Route::middleware(['auth', AdminRoute::class])->prefix('admin')->name('admin.')-
         Route::post('/verify/images', 'verifyImages');
         
         Route::get('/data', 'data')->name('data');
+        Route::delete('/remove/{product}', 'remove')->name('remove');
     });
 });
 

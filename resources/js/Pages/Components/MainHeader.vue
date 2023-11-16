@@ -7,7 +7,7 @@
         <img src="/logo-placeholder.png" alt="Logo place holder" height="50">
 
         <nav>
-            <Link :class="{ active: '/cart' === $page.url}" :href="'/cart'"> <i class="fa-solid fa-cart-shopping" style="margin-right: .35rem;"></i> Cart</Link>
+            <Link v-if="!user?.isAdmin" :class="{ active: '/cart' === $page.url}" :href="'/cart'"> <i class="fa-solid fa-cart-shopping" style="margin-right: .35rem;"></i> Cart</Link>
             <Link v-if="user" :class="{ active: '/dashboard' === $page.url}" :href="'/dashboard'">{{ user.username }}</Link>
             <Link v-else :class="{ active: '/login' === $page.url}" :href="'/login'">Login</Link>
         </nav>

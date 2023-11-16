@@ -11,25 +11,6 @@ class PaymentMethod{
             return ProofPayment::handle();
         }
 
-        $data = PaymentMethod::extract($cart);
-
-        return PaypalPayment::handle($data);
+        return PaypalPayment::handle($cart->total);
     }
-
-    public static function extract($cart){
-        $items = $cart->items();
-
-        $data = $items->select('product_id', 'total', 'quantity')->with('product:id,name')->get();
-
-        $total = $data->sum('total');
-        $quantity = $data->sum('quantity');
-
-        $data = $data->toArray();
-        
-        $data['total'] = $total;
-        $data['quantity'] = $quantity;
-
-        return $data;
-    }
-
 }

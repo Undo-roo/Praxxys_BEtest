@@ -17,8 +17,8 @@ const props = defineProps({
 })
 
 const navigations: {label: string, route: string }[] = [
-    { label: 'Home', route: '/'},
-    { label: 'Order', route: '/product'},
+    { label: 'Home', route: '/' },
+    { label: 'Order', route: '/product' },
 ]
 </script>
 

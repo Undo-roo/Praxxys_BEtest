@@ -3,63 +3,35 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Cart;
-use App\Models\CartItems;
+use App\Models\CartItem;
 use App\Models\Product;
-use Inertia\Inertia;
 use App\Http\Class\PaymentMethod;
+use App\Http\Requests\CartAddRequest;
+use App\Http\Traits\PrefixController;
 
 class CartController extends Controller
 {
+    use PrefixController;
+
+    protected $prefix = 'Customer/Cart/';
     /** 
      * User Cart List
     */
     public function index(){
 
-        $cart = request()->user()->activeCart(['items.product:id,category_id,name,price', 'items.product.category:id,title']);
+        $cart = request()->user()
+        ->activeCart(['items.product:id,category_id,name,price', 'items.product.category:id,title'])
+        ->append(['quantity', 'total']);
 
-        // dd($cart);
-
-        return Inertia::render('Customer/Cart/Index', compact('cart'));
+        return $this->render( compact('cart'), 'Index');
     }
 
-    public function add(Request $request, Product $product){
-        $data = $request->validate([
-            'product_id' => 'required',
-            'quantity' => 'required|integer|min:1',
-        ]);
+    public function add(CartAddRequest $request, Product $product){
+        $data = $request->validated();
 
         $cart = $request->user()->activeCart();
 
-
-        // -------- Incase na mas efficient to --------
-        // $total = $product->price * $data['quantity'];
-        // $quantity = $data['quantity'];
-
-        // $item = CartItems::where('product_id', $product->id)->where('cart_id', $cart->id)->first();
-
-        // if($item){
-        //     $total = $total - $item->total; // Current - Previous
-        //     $quantity = $quantity - $item->quantity; // Current - Previous
-        // }
-        // else {
-        //     $item = new CartItems;
-
-        //     $item->cart_id = $cart->id;
-        //     $item->product_id = $product->id;
-        // }
-
-        // $item->quantity = $quantity;
-        // $item->total = $total;
-        // $item->save();
-
-
-        // $cart->quantity += $quantity;
-        // $cart->total += $total; 
-        // $cart->save();
-        // -------- Incase na mas efficient to --------
-
-        CartItems::updateOrCreate(
+        CartItem::updateOrCreate(
             ['product_id' => $product->id, 'cart_id' => $cart->id ],
             ['quantity' => $data['quantity'], 'total' => $product->price * $data['quantity'] ]
         );
@@ -67,7 +39,7 @@ class CartController extends Controller
         return redirect(route('cart.index'));
     }
 
-    public function edit(Request $request, CartItems $item){
+    public function edit(Request $request, CartItem $item){
 
         if( $this->notOwnedByAuthUser( $item->cart ) ){ 
             abort(403);
@@ -83,7 +55,7 @@ class CartController extends Controller
         return redirect(route('cart.index'));
     }
 
-    public function destroy(CartItems $item){
+    public function destroy(CartItem $item){
 
         $cart = $item->cart;
 
@@ -99,7 +71,7 @@ class CartController extends Controller
     public function checkout(){
         $cart = request()->user()->activeCart(['items.product:id,category_id,name,price', 'items.product.category:id,title']);
 
-        return Inertia::render('Customer/Cart/Checkout', compact('cart'));
+        return $this->render( compact('cart'), 'Checkout');
     }
 
     public function payment(){
@@ -114,12 +86,13 @@ class CartController extends Controller
         request()->user()->newCart();
         $success = true;
 
-        return Inertia::render('Customer/Cart/SuccessCancel', compact('success'));
+        return $this->render( compact('success'), 'SuccessCancel');
     }
 
     public function cancel(){
         $success = false;
-        return Inertia::render('Customer/Cart/SuccessCancel', compact('success'));
+        
+        return $this->render( compact('success'), 'SuccessCancel');
     }
 
     public function notOwnedByAuthUser($cart){

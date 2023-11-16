@@ -1,14 +1,21 @@
 <template>
     <div class="test-box">
 
+        <div class="grid">
+            <Alert type="success" />
+            <Alert type="primary" />
+        </div>
+
+        <div class="grid">
+            <Alert type="warning" />
+            <Alert type="error" />
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { Form } from './Function/Form';
-const form = Form(1);
+import Alert from './Components/Widgets/Alert.vue';
 
-form.hello()
 
 </script>
 
@@ -16,6 +23,13 @@ form.hello()
 .test-box{
     width: 100vw;
     height: 100vh;
-    background-color: rgb(149, 149, 149);
+    padding: 2rem;
+    background-color: rgb(214, 214, 214);
+
+    .grid{
+        display: grid;
+        grid-auto-flow: column;  
+        column-gap: 1rem;
+    }
 }
 </style>

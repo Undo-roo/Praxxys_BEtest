@@ -45,12 +45,10 @@ import { ref, Ref, reactive, onBeforeMount } from 'vue';
 import Template from '@/Admin/Dashboard/Template.vue';
 import CustomDataTable from '@/Components/ProductDataTable.vue';
 import Card from '@/Components/Widgets/Card.vue';
-import moment from 'moment'
-import { usePage, Link } from '@inertiajs/vue3';
+import { usePage, Link, router } from '@inertiajs/vue3';
 import ButtonIcon from '@/Components/Button.vue';
 import { Pagination, Links } from '@/Utilities/Type/Pagination';
 import { Product, Category } from '@/Utilities/Classes';
-import axios from 'axios';
 
 interface CategorySelect {
     id: number,
@@ -90,11 +88,6 @@ const filterData = async () =>{
 
     const { data, status } = await axios.post<Response>('/api/product/data', requestData)
 
-    // products.value = data.data.map((item: Product) => {
-    //     item.dateTime = convertDateTime(item.dateTime)
-    //     return item
-    // })
-
     products.value = data.data as Items[]
 
     links.value = data.links
@@ -111,14 +104,18 @@ const deleteData = async (name: string, id: number) =>{
     isLoading.value = true
 
     if(confirm("Are you sure you want to delete " + name)){
-        await axios.post('/api/product/remove', {id: id})
-        .then( (res) => {
-            products.value = products.value.filter((item) => item.id !== id)
-        })
-        .catch( (error) =>{
-            console.log(error)
-            isLoading.value = false
-        })
+
+        router.delete(`/admin/product/remove/${id}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                products.value = products.value.filter((item) => item.id !== id)
+            },
+
+            onError: (error) => {
+                console.log(error)
+                isLoading.value = false
+            }
+        });
     }
 
     isLoading.value = false

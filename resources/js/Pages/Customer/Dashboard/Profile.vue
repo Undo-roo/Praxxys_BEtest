@@ -3,7 +3,8 @@
 
         <!-- Create alert box -->
         <p class="message" v-if="$page.props.message">{{ $page.props.message }}</p>
-        PROFILE
+
+          PROFILE
 
           <Link
               class="sidebar-label"

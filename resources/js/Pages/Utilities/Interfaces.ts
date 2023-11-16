@@ -40,7 +40,7 @@ interface User{
     name: string,
     username: string,
     updated_at: string,
-
+    isAdmin: boolean,
 }
 
 interface Product{
@@ -71,8 +71,8 @@ interface Cart{
     id: number,
     user_id: number,
     checkout: string,
-    // quantity: number,
-    // total: number,
+    quantity?: number,
+    total?: number,
 }
 
 interface CartItem{   

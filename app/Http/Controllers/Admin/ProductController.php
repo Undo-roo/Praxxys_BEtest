@@ -3,64 +3,53 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductUpdateRequest;
 use Illuminate\Http\Request;
 
-use Inertia\Inertia;
 use App\Models\Product;
 use App\Models\Category;
+use App\Http\Repository\ProductRepository;
+use App\Http\Traits\PrefixController;
 
 class ProductController extends Controller
 {
-
-    public $limit = 10;
-
+    use PrefixController;
+    
     protected $prefix = 'Admin/Product/';
 
     public function index(){
 
-        $categories = Category::select('id', 'title')->get()->toArray();
-
-        return Inertia::render( $this->prefix . 'Index', [
-            'categories' => $categories,
-        ]);
+        $categories = $this->selectableCategory();
+        
+        return $this->render( compact('categories'), 'Index');
     }
 
     public function create(){
-        $categories = Category::select('id', 'title')->get()->toArray();
-        return Inertia::render( $this->prefix . 'Create', [
-            'categories' => $categories,
-        ]);
+        $categories = $this->selectableCategory();
+
+        return $this->render( compact('categories'), 'Create');
     }
 
     public function edit($id){
-        $categories = Category::select('id', 'title')->get()->toArray();
+        $categories = $this->selectableCategory();
         $product = Product::find($id);
         
-        return Inertia::render( $this->prefix . 'Edit', [
-            'categories' => $categories,
-            'product' => $product,
-        ]);
+        $data = compact('categories', 'product');
+
+        return $this->render($data, 'Edit');
     }
 
     public function data(Request $request){
-        $products = Product::where(function ($query) use ($request){
-            $query->where('description', 'LIKE', '%'. $request->keyword .'%')
-            ->orWhere('name', 'LIKE', '%'. $request->keyword .'%');
-        });
 
-        if($request->filterBy){
-            $products = $products->where('category_id', $request->filterBy);
-        }
+        $products = ProductRepository::paginateAdminData($request->keyword, $request->filterBy);
 
-        $products = $products->with('category')->orderBy('created_at', 'DESC')->paginate(20);
-        
         return response()->json($products);
     }
 
-    public function remove(Request $request){
-        Product::find($request->id)->delete();
+    public function remove(Product $product){
+        $product->delete();
 
-        return response(200);
+        return back();
     }
 
     public function verifyDetails(Request $request){
@@ -82,14 +71,13 @@ class ProductController extends Controller
         return back();
     }
 
-
     public function store(Request $request){
+        // di ko na inalis since isa lang naman 
         $request->validate([
             'dateTime' => 'required|date',
         ]);
 
         $data = $request->all();
-        // $images = $data['images'];
 
         unset($data['images'], $data['id'], $data['location']);
 
@@ -98,15 +86,8 @@ class ProductController extends Controller
         return redirect()->route('admin.product.index');
     }
 
-    public function update(Request $request){
-        $request->validate([
-            'dateTime' => 'required|date',
-            'images.*' => 'required|mimes:png,jpeg,jpg',
-            'name' => 'required|string',
-            'category_id' => 'required',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:1', //|max:2000
-        ]);
+    public function update(ProductUpdateRequest $request){
+        $request->validated();
 
         $product = Product::find($request->id);
 
@@ -118,5 +99,9 @@ class ProductController extends Controller
         $product->save();
         
         return redirect()->route('admin.product.index');
+    }
+
+    public function selectableCategory(){
+        return Category::select('id', 'title')->get()->toArray();
     }
 }

@@ -23,12 +23,12 @@
                             <td><img src="/product-placeholder.png" alt="" width="150"></td>
                             <td>{{ item.product.name }}</td>
                             <td>{{ item.product.category.title }}</td>
-                            <td style="padding-right: .5rem; padding-left: .5rem"> <Quantity @change-val="changeTotal(ind)" v-model="item.quantity" /> </td>
+                            <td style="padding-right: .5rem; padding-left: .5rem"> <Quantity @change-val="changeTotal(ind, item.id)" v-model="item.quantity" /> </td>
                             <!-- <td>{{ item.quantity }}</td> -->
                             <td>{{ item.total.toFixed(2) }}</td>
                             <td>
                                 <div class="d-flex" style="justify-content: center;">
-                                    <button @click="edit(item.id, ind)" class="edit-btn"><i class="fa-solid fa-edit"></i></button>
+                                    <!-- <button @click="edit(item.id, ind)" class="edit-btn"><i class="fa-solid fa-edit"></i></button> -->
                                     <button @click="destroy(item.id, ind)" class="delete-btn"><i class="fa-solid fa-xmark"></i></button>
                                 </div>
                             </td>
@@ -60,7 +60,7 @@ import MainTemplate from '@/MainTemplate.vue';
 import { Cart, CartItem } from '@/Utilities/Interfaces';
 import ButtonIcon from '@/Components/Button.vue'
 import Quantity from '@/Components/Quantity.vue'
-import { computed, reactive, ref } from 'vue';
+import { reactive, ref } from 'vue';
 
 interface Item extends CartItem{
     product: {
@@ -82,13 +82,9 @@ const alert = ref(false);
 
 const cart: Current = reactive(usePage().props.cart as Current);
  
-const total = computed (() => {
-    return cart.items.reduce( (sum, { total }) => (sum + total), 0).toFixed(2);
-})
+const total = ref(cart.total);
 
-const quantity = computed (() => {
-    return cart.items.reduce( (sum, { quantity }) => (sum + quantity), 0)
-})
+const quantity = ref(cart.quantity);
 
 function destroy(id: number, ind: number){
     if (confirm(`Are you sure you want to delete this ${cart.items[ind].product.name} Item in the cart?`)) {
@@ -98,20 +94,31 @@ function destroy(id: number, ind: number){
     }
 }
 
-function edit(id: number, ind: number){
+// function edit(id: number, ind: number){
+
+//     router.patch('/cart/edit/'+id, {
+//         quantity: cart.items[ind].quantity,
+//     }, { preserveScroll: true, onSuccess: () => {
+//         alert.value = true;
+        
+//         setTimeout(() => alert.value = false, 5000);
+//         return true;
+//     } }, );
+    
+// }
+
+function changeTotal(ind: number, id: number){
 
     router.patch('/cart/edit/'+id, {
         quantity: cart.items[ind].quantity,
-    }, { preserveScroll: true, onSuccess: () => {
-        alert.value = true;
+    }, { 
+        preserveState: false, 
+        onSuccess: () => {
+            alert.value = true;
 
-        setTimeout(() => alert.value = false, 5000);
-        return true;
-    } }, );
-    
-}
+        } 
+    },);
 
-function changeTotal(ind: number){
     let item = cart.items[ind];
 
     cart.items[ind].total = item.product.price * item.quantity

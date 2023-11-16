@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Product;
-use App\Models\Category;
 // use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
@@ -16,9 +15,12 @@ class ProductController extends Controller
     protected $prefix = 'Customer/Product/';
 
     public function index(){
-        $products = Product::limit(30)->get()->append('path');
 
-        return Inertia::render("{$this->prefix}Index", compact('products'));
+        $pagination = Product::paginate(15);
+        $pagination->append('path');
+
+
+        return Inertia::render("{$this->prefix}Index", compact('pagination'));
     }
 
     public function show(Product $product){

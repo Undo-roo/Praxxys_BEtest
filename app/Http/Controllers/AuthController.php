@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AuthCreateRequest;
+use App\Http\Requests\AuthLoginRequest;
 use App\Http\Traits\Authentication;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -17,13 +18,9 @@ class AuthController extends Controller
         return Inertia::render('Authentication/Login');
     }
 
-    public function login(Request $request){
+    public function login(AuthLoginRequest $request){
 
-        $data = $request->validate([
-            'password' => 'required|string',
-            'username' => 'required|string',
-            'remember' => 'nullable'
-        ]);
+        $data = $request->validated();
 
         return $this->authenticate($data);
     }
@@ -32,27 +29,15 @@ class AuthController extends Controller
         return Inertia::render('Authentication/Register');
     }
 
-    public function create(Request $request){
+    public function create(AuthCreateRequest $request){
         
-        // Will refactor in the future
+        $data = $request->validated();
 
-        $data = $request->validate([
-            'password' => 'required|string|confirmed',
-            'username' => 'required|string|unique:users',
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'remember' => 'nullable'
-        ]);
+        $data['password'] = Hash::make($data['password']);
 
-        User::create([
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'name' => $data['name'],
-            'password' => Hash::make($data['password']),
-        ]);
+        User::create($data);
 
-        $message = "Success registration!";
-        return Inertia::render('Authentication/Login', compact('message'));
+        return Inertia::render('Authentication/Login', [ 'message' => "Success registration!"]);
 
     }
 }

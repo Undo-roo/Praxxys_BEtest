@@ -18,10 +18,12 @@
                     <h4>₱ {{ total }}</h4>
                     <p style="max-width: 400px;">{{ product.description }}</p>
 
-                    <Quantity v-model="fields.quantity" />
-                    <form @submit.prevent="fields.post('/cart/add/'+product.id)">
-                        <button class="cart-button"> <i class="fa-solid fa-cart-shopping"></i> Add to Cart </button>
-                    </form>
+                    <div v-if="!isAdmin">
+                        <Quantity v-model="fields.quantity" />
+                        <form @submit.prevent="fields.post('/cart/add/'+product.id)">
+                            <button class="cart-button"> <i class="fa-solid fa-cart-shopping"></i> Add to Cart </button>
+                        </form>
+                    </div>
                 </section>
             </div>
         </div>
@@ -37,12 +39,11 @@ import Quantity from '@/Components/Quantity.vue'
 // import CustomCarousel from '@/Components/CustomCarousel.vue';
 
 const product: Product = usePage().props.product as Product;
-const { id }: User = usePage().props.product as User;
+const { isAdmin }: User = usePage().props.user as User;
 
 const fields = useForm({
     quantity: 1,
     product_id: product.id,
-    user_id: id,
 });
 const selected = ref('product-placeholder.png');
 
